@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/utils";
+import { FormEvent, useState } from "react";
 import {
     Dialog,
     DialogHeader,
@@ -9,25 +9,24 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Button } from "@/shared/components/ui/button";
 
-
-import { validatePhoneNumber } from "@/shared/utils/validatePhoneNumber";
-import { FormEvent, useState } from "react";
 import { TimePicker } from "@/shared/components/reui/time-picker";
 import { PatientName } from "./formComponents/patientName";
 import { DatePicker } from "./formComponents/datePicker";
+import { validatePhoneNumber } from "@/shared/utils/validatePhoneNumber";
 
 const ApplicationForm = ({ selectedDate, setSelectedDate, dialogTrigger, setDialogTrigger }: { selectedDate: Date | undefined, setSelectedDate: (date: Date | undefined) => void, dialogTrigger: boolean, setDialogTrigger: (value: boolean) => void }) => {
-
+    const [trigger, setTrigger] = useState(false);
+    
+    //Form Handling States
     const [patientName, setPatientName] = useState<string>("");
     const [patientPhone, setPatientPhone] = useState<string>("");
     const [reason, setReason] = useState<string>("");
-    const [trigger, setTrigger] = useState(false);
-    const [date, setDate] = useState<Date>();
     const [duration, setDuration] = useState<number>(0);
+
+    //Form Handling Function
     const submit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(patientName, patientPhone, selectedDate, duration, reason, status);
-        console.log(new FormData(e.currentTarget).entries())
+
     }
     return (
         <>
@@ -44,10 +43,11 @@ const ApplicationForm = ({ selectedDate, setSelectedDate, dialogTrigger, setDial
                                     <Label>Patient Contact</Label>
                                     <Input
                                         type="tel"
+                                        name="patient_phone"
                                         className="rounded-md px-2 border border-black/30 placeholder:text-black/20"
                                         placeholder="+92 318 0000211"
                                         required
-                                        onBlur={e => validatePhoneNumber(e.target.value) && setPatientPhone(e.target.value)}
+                                        onChange={e => validatePhoneNumber(e.target.value) && setPatientPhone(e.target.value)}
                                     />
                                 </div>
                                 <div className="w-1/2 flex flex-col gap-2">
@@ -55,8 +55,8 @@ const ApplicationForm = ({ selectedDate, setSelectedDate, dialogTrigger, setDial
                                     <DatePicker
                                         trigger={trigger}
                                         setTrigger={setTrigger}
-                                        date={date}
-                                        setDate={setDate}
+                                        date={selectedDate}
+                                        setDate={setSelectedDate}
                                     />
                                 </div>
                             </div>
@@ -69,10 +69,10 @@ const ApplicationForm = ({ selectedDate, setSelectedDate, dialogTrigger, setDial
                                         type="number"
                                         className="rounded-md px-2 border border-black/30 placeholder:text-black/20"
                                         placeholder="Patient Phone"
-                                        min={5}
+                                        min={15}
                                         step={15}
                                         required
-                                        onBlur={e => setDuration(e.target.valueAsNumber)}
+                                        onChange={e => setDuration(e.target.valueAsNumber)}
                                     />
                                 </div>
                                 <div className="w-1/2 flex flex-col gap-2">
@@ -93,7 +93,7 @@ const ApplicationForm = ({ selectedDate, setSelectedDate, dialogTrigger, setDial
                                 type="text"
                                 className="rounded-md px-2 border border-black/30 placeholder:text-black/20"
                                 placeholder="Reason"
-                                onBlur={e => setReason(e.target.value)}
+                                onChange={e => setReason(e.target.value)}
                             />
                         </div>
                         <div className="flex flex-col justify-center items-start gap-2">
