@@ -4,21 +4,25 @@ import {
     PopoverTrigger,
 } from "@/shared/components/ui/popover"
 import { Button } from "@/shared/components/ui/button";
-import { format } from "date-fns";
+import { format, formatDate } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/shared/components/ui/calendar";
 import { pastDateCheck } from "@/shared/utils/pastDateCheck";
+import { useAppointmentForm } from "../../hooks/appointmentFormHook";
+import { useState } from "react";
 
-const DatePicker = ({ trigger, setTrigger, date, setDate }: { trigger: boolean, setTrigger: (arg0: boolean) => void, date: Date | undefined, setDate: (arg0: Date) => void }) => {
+const DatePicker = ({ trigger, setTrigger }: { trigger: boolean, setTrigger: (arg0: boolean) => void }) => {
+    const [date, setDate] = useState<Date | undefined>(undefined);
+    const { formValues, setFormValues } = useAppointmentForm();
     return (
         <Popover open={trigger} onOpenChange={setTrigger}>
             <PopoverTrigger render={
                 <Button
                     variant={"outline"}
-                    data-empty={!date}
+                    data-empty={!formValues.date}
                     className="justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-md"
                 >
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    {formValues.date ? format(formValues.date, "PPP") : <span>Pick a date</span>}
                     <ChevronDownIcon data-icon="inline-end" />
                 </Button>
             }
@@ -27,9 +31,13 @@ const DatePicker = ({ trigger, setTrigger, date, setDate }: { trigger: boolean, 
                 <Calendar
                     mode="single"
                     selected={date}
-                    onSelect={(date) => {
-                        if (!date || !pastDateCheck(date)) return;
-                        setDate(date);
+                    onSelect={(value) => {
+                        if (!value || !pastDateCheck(value)) return;
+                        setFormValues(prev => ({
+                            ...prev,
+                            date: formatDate(value.toDateString(), "PPP")
+                        }))
+                        setDate(value)
                         setTrigger(false);
                     }}
                     defaultMonth={date}
