@@ -4,7 +4,7 @@ const pastDateCheck = (date: Date | undefined) => {
   if (!date) {
     return false;
   }
-  if (date < currentDate) {
+  if (date.getDay < currentDate.getDate) {
     toast.error("Appointment cannot be booked in past", {
       position: "top-right",
     });

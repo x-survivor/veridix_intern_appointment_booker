@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 import {
     Dialog,
@@ -10,7 +10,6 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Button } from "@/shared/components/ui/button";
 
-
 import { useAppSelector } from "@/shared/hooks/ReduxCustomHooks";
 import { AppointmentFormContext } from "../hooks/formContext";
 import { appointmentFormType } from "@/shared/constants/types/appointmentFormType";
@@ -20,16 +19,12 @@ import { PatientPhone } from "./formComponents/patientPhone";
 import { Duration } from "./formComponents/duration";
 import { DoctorName } from "./formComponents/doctorName";
 
+import { SubmitForm } from "../services/handleForm";
+
 const ApplicationForm = ({ dialogTrigger, setDialogTrigger }: { dialogTrigger: boolean, setDialogTrigger: (value: boolean) => void }) => {
     const initialValues = useAppSelector((state) => state.form);
     const [formValues, setFormValues] = useState<appointmentFormType>(initialValues);
-
-
-    //Form Handling Function
-    const submit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        
-    }
+    
     return (
         <AppointmentFormContext.Provider value={{ formValues, setFormValues }}>
             <Dialog open={dialogTrigger} onOpenChange={() => setDialogTrigger(false)}>
@@ -37,7 +32,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger }: { dialogTrigger: b
                     <DialogHeader>
                         <DialogTitle>Appointment Form</DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={submit} className="flex flex-col gap-5">
+                    <form onSubmit={(e) => SubmitForm(e, formValues)} className="flex flex-col gap-5">
                         <PatientName />
                         <PatientPhone />
                         <Duration />

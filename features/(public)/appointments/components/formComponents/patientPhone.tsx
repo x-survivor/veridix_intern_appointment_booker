@@ -6,7 +6,7 @@ import { useState } from "react"
 import { DatePicker } from "./datePicker"
 
 const PatientPhone = () => {
-    const {formValues, setFormValues} = useAppointmentForm();
+    const { setFormValues } = useAppointmentForm();
     const [trigger, setTrigger] = useState(false);
     return (
         <div className="flex flex-col justify-center items-start gap-2">
@@ -15,12 +15,12 @@ const PatientPhone = () => {
                     <Label>Patient Contact</Label>
                     <Input
                         type="tel"
-                        value={formValues.patient_phone}
                         className="rounded-md px-2 border border-black/30 placeholder:text-black/20"
                         placeholder="+92 318 0000211"
+                        minLength={10}
                         maxLength={13}
                         required
-                        onChange={e => validatePhoneNumber(e.target.value) && setFormValues(prev => (
+                        onBlur={e => validatePhoneNumber(e.target.value) && setFormValues(prev => (
                             {
                                 ...prev,
                                 patient_phone: e.target.value
@@ -40,4 +40,4 @@ const PatientPhone = () => {
     )
 }
 
-export {PatientPhone}
+export { PatientPhone }

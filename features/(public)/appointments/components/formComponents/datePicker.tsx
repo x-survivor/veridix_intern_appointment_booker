@@ -4,7 +4,7 @@ import {
     PopoverTrigger,
 } from "@/shared/components/ui/popover"
 import { Button } from "@/shared/components/ui/button";
-import { format, formatDate } from "date-fns";
+import { format } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/shared/components/ui/calendar";
 import { pastDateCheck } from "@/shared/utils/pastDateCheck";
@@ -35,7 +35,7 @@ const DatePicker = ({ trigger, setTrigger }: { trigger: boolean, setTrigger: (ar
                         if (!value || !pastDateCheck(value)) return;
                         setFormValues(prev => ({
                             ...prev,
-                            date: formatDate(value.toDateString(), "PPP")
+                            date: value.toDateString()
                         }))
                         setDate(value)
                         setTrigger(false);

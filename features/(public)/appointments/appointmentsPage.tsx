@@ -28,8 +28,6 @@ const AppointmentPage = () => {
                 />
             </Suspense>
             <ApplicationForm
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
                 dialogTrigger={dialogTrigger}
                 setDialogTrigger={setDialogTrigger}
             />
