@@ -1,21 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/shared/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/shared/components/ui/select";
 
 import { Toaster } from "@/shared/components/ui/sonner";
 import { ApplicationForm } from "./components/appointmentForm";
-import { AppointmentCard } from "./components/appointmendCard";
+import { AppointmentCard } from "@/shared/components/appointmendCard";
 import { Filter, Plus } from "lucide-react";
 import { doctors } from "@/shared/constants/datasets/doctors";
 
 import { mockAppointments } from "@/shared/constants/datasets/mockAppointmentData";
 
+type mock = {
+    id: number,
+    doctor_name: string,
+    patient_name: string,
+    date: string,
+    time: string,
+    status: string,
+}
+const status = [
+    {
+        value: "booked",
+        label: "Booked"
+    },
+    {
+        value: "canceled",
+        label: "Cancelled"
+    },
+    {
+        value: "completed",
+        label: "Completed"
+    },
+    
+]
+
 const AppointmentPage = () => {
     const [dialogTrigger, setDialogTrigger] = useState(false);
     const [filter, setFilter] = useState<string>("");
+    const [filteredData, setFilteredData] = useState<mock[]>(mockAppointments);
+
+    useEffect(() => {
+        const filterData = () => {
+            if (filter == "") {
+                setFilteredData(mockAppointments);
+                return;
+            }
+            const filteredArray = mockAppointments.filter((item) => (
+                item.doctor_name == filter || item.status == filter
+            ))
+            setFilteredData(filteredArray);
+        }
+        filterData();
+    }, [filter])
 
     return (
         <section className="px-10 py-5 flex flex-col gap-2">
@@ -23,18 +62,28 @@ const AppointmentPage = () => {
             <div className="w-full flex justify-end items-center gap-2">
                 <Select value={filter} onValueChange={(value) => setFilter(value ?? "")}>
                     <SelectTrigger className={`w-1/3 lg:w-50 border border-black/30 px-2 rounded-md`}>
-                        <Filter /> <SelectValue placeholder={"Filter"}/>
+                        <Filter /> <SelectValue placeholder={"Filter"} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
+                            <h6 className="text-sm font-semibold text-black/50 px-2 py-2 border-b">By Doctor Name</h6>
                             {doctors && doctors.map((doctor) => (
-                                    <SelectItem key={doctor.name} value={doctor.name}>
-                                        {doctor.name}
-                                    </SelectItem>
-                                ))}
+                                <SelectItem key={doctor.name} value={doctor.name}>
+                                    {doctor.name}
+                                </SelectItem>
+                            ))}
+                        </SelectGroup>
+                        <SelectGroup>
+                            <h6 className="text-sm font-semibold text-black/50 px-2 py-2 border-b">By Status</h6>
+                            {status.map((item)=> (
+                                <SelectItem key={item.value} value={item.label}>
+                                    {item.label}
+                                </SelectItem>
+                            ))}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
+                <Button onClick={() => setFilter("")} variant="destructive" className="rounded-md">Reset</Button>
                 <Button
                     variant="ghost"
                     onClick={() => setDialogTrigger(true)}
@@ -48,7 +97,7 @@ const AppointmentPage = () => {
                 setDialogTrigger={setDialogTrigger}
             />
             {
-                mockAppointments ? mockAppointments?.map(({ id, doctor_name, patient_name, date, time, status }) => (
+                filteredData ? filteredData?.map(({ id, doctor_name, patient_name, date, time, status }) => (
                     <AppointmentCard key={id} doctor_name={doctor_name} patient_name={patient_name} date={date} time={time} status={status} />
                 )) : <p>Loading...</p>
             }

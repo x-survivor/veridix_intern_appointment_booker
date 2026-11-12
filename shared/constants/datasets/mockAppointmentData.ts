@@ -9,7 +9,7 @@ export const mockAppointments = [
   },
   {
     id: 2,
-    doctor_name: "Dr. Sarah Ahmed",
+    doctor_name: "Dr. Usman",
     patient_name: "Usman Tariq",
     date: "2026-11-12",
     time: "09:30",
@@ -17,7 +17,7 @@ export const mockAppointments = [
   },
   {
     id: 3,
-    doctor_name: "Dr. Ahmed Raza",
+    doctor_name: "Dr. Sara",
     patient_name: "Hassan Malik",
     date: "2026-11-12",
     time: "10:00",
@@ -25,7 +25,7 @@ export const mockAppointments = [
   },
   {
     id: 4,
-    doctor_name: "Dr. Fatima Noor",
+    doctor_name: "Dr. Usman",
     patient_name: "Ayesha Iqbal",
     date: "2026-11-12",
     time: "10:30",
@@ -41,7 +41,7 @@ export const mockAppointments = [
   },
   {
     id: 6,
-    doctor_name: "Dr. Sarah Ahmed",
+    doctor_name: "Dr. Sara",
     patient_name: "Zainab Aslam",
     date: "2026-11-13",
     time: "11:30",
@@ -49,7 +49,7 @@ export const mockAppointments = [
   },
   {
     id: 7,
-    doctor_name: "Dr. Usman Khalid",
+    doctor_name: "Dr. Usman",
     patient_name: "Hamza Sheikh",
     date: "2026-11-14",
     time: "12:00",
@@ -57,7 +57,7 @@ export const mockAppointments = [
   },
   {
     id: 8,
-    doctor_name: "Dr. Fatima Noor",
+    doctor_name: "Dr. Sara",
     patient_name: "Maham Saeed",
     date: "2026-11-14",
     time: "12:30",
@@ -65,7 +65,7 @@ export const mockAppointments = [
   },
   {
     id: 9,
-    doctor_name: "Dr. Ahmed Raza",
+    doctor_name: "Dr. Usman",
     patient_name: "Daniyal Shah",
     date: "2026-11-15",
     time: "14:00",
@@ -79,4 +79,4 @@ export const mockAppointments = [
     time: "15:00",
     status: "Completed",
   },
-] as const;
+];
