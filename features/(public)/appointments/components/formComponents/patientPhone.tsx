@@ -1,9 +1,12 @@
-import { validatePhoneNumber } from "@/shared/utils/validatePhoneNumber"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+
 import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
-import { useAppointmentForm } from "../../hooks/appointmentFormHook"
-import { useState } from "react"
 import { DatePicker } from "./datePicker"
+
+import { useAppointmentForm } from "../../hooks/appointmentFormHook"
+import { validatePhoneNumber } from "@/shared/utils/validatePhoneNumber"
 
 const PatientPhone = () => {
     const { setFormValues } = useAppointmentForm();

@@ -36,6 +36,7 @@ const Duration = () => {
                                             ...prev,
                                             start_time: value ?? ""
                                         }))}
+                                        required
                                         className="border border-black/30 rounded-md"
                                     />
                                 </div>

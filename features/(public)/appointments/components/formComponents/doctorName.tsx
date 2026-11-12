@@ -19,7 +19,8 @@ const DoctorName = () => {
                 onValueChange={value => setFormValues(prev => ({
                     ...prev,
                     doctor_name: value ?? ""
-                }))}>
+                }))}
+                required>
                 <SelectTrigger className="w-full border border-black/30 p-2 rounded-md">
                     <SelectValue placeholder="Doctor Name" />
                 </SelectTrigger>

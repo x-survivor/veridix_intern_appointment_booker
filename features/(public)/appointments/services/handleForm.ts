@@ -7,6 +7,7 @@ const SubmitForm = (
   formValues: appointmentFormType,
 ) => {
   e.preventDefault();
+
   const id = crypto.randomUUID();
   const AppointSubmitData = ({
     id: id,
