@@ -1,3 +1,6 @@
+import { Controller, useFormContext } from "react-hook-form";
+import { appointmentFormType } from "@/shared/constants/types/appointmentFormType";
+
 import {
     Select,
     SelectTrigger,
@@ -7,35 +10,49 @@ import {
 } from "@/shared/components/ui/select";
 import { Label } from "@/shared/components/ui/label";
 import { doctors } from "@/shared/constants/datasets/doctors";
-import { useAppointmentForm } from "../../hooks/appointmentFormHook"
+import { cn } from "@/shared/lib/utils";
 
 const DoctorName = () => {
-    const {formValues, setFormValues} = useAppointmentForm();
+
+    const { control } = useFormContext<appointmentFormType>();
+
     return (
-        <div className="flex flex-col justify-center items-start gap-2">
-            <Label>Doctor</Label>
-            <Select
-                value={formValues.doctor_name}
-                onValueChange={value => setFormValues(prev => ({
-                    ...prev,
-                    doctor_name: value ?? ""
-                }))}
-                required>
-                <SelectTrigger className="w-full border border-black/30 p-2 rounded-md">
-                    <SelectValue placeholder="Doctor Name" />
-                </SelectTrigger>
-                <SelectContent>
-                    {
-                        doctors && doctors.map((value) => {
-                            return (
-                                <SelectItem key={value.name} value={value.name}>{value.name}</SelectItem>
-                            )
-                        })
-                    }
-                </SelectContent>
-            </Select>
-        </div>
+        <Controller
+            name="doctor_name"
+            control={control}
+            rules={{ required: { value: true, message: "Doctor Name is required" } }}
+            render={({ field, fieldState }) => (
+                <div className="flex flex-col justify-center items-start gap-2">
+                    <Label>Doctor</Label>
+                    <Select
+                        onValueChange={field.onChange}
+                    >
+                        <SelectTrigger
+                            onBlur={field.onBlur}
+                            className={cn("w-full border border-black/30 p-2 rounded-md",
+                                fieldState.error ? "border-red-600" : "border-black/30"
+                            )}>
+                            <SelectValue placeholder="Doctor Name" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {
+                                doctors && doctors.map((value) => {
+                                    return (
+                                        <SelectItem key={value.name} value={value.name}>{value.name}</SelectItem>
+                                    )
+                                })
+                            }
+                        </SelectContent>
+                    </Select>
+                    {fieldState.error && (
+                        <Label className="text-red-600">
+                            {fieldState.error.message}
+                        </Label>
+                    )}
+                </div>
+            )}
+        />
     )
 }
 
-export {DoctorName}
+export { DoctorName }

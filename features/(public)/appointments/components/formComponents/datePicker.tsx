@@ -1,48 +1,67 @@
+import { useFormContext, Controller } from "react-hook-form";
+import { format } from "date-fns";
+
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/shared/components/ui/popover"
+import { Label } from "@/shared/components/ui/label";
 import { Button } from "@/shared/components/ui/button";
-import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/shared/components/ui/calendar";
-import { pastDateCheck } from "@/shared/utils/pastDateCheck";
-import { useAppointmentForm } from "../../hooks/appointmentFormHook";
-import { useState } from "react";
+
+import { ChevronDownIcon } from "lucide-react";
+import { cn } from "@/shared/lib/utils"
+
+import { appointmentFormType } from "@/shared/constants/types/appointmentFormType";
 
 const DatePicker = ({ trigger, setTrigger }: { trigger: boolean, setTrigger: (arg0: boolean) => void }) => {
-    const [date, setDate] = useState<Date | undefined>(undefined);
-    const { formValues, setFormValues } = useAppointmentForm();
+
+    const { control } = useFormContext<appointmentFormType>();
+
     return (
-        <Popover open={trigger} onOpenChange={setTrigger}>
-            <PopoverTrigger render={
-                <Button
-                    variant={"outline"}
-                    data-empty={!formValues.date}
-                    className="justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-md"
-                >
-                    {formValues.date ? formValues.date : <span>Pick a date</span>}
-                    <ChevronDownIcon data-icon="inline-end" />
-                </Button>
-            }
-            />
-            <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={(value) => {
-                        if (!value || !pastDateCheck(value)) return;
-                        setFormValues(prev => ({
-                            ...prev,
-                            date: value.toDateString()
-                        }))
-                        setDate(value)
-                        setTrigger(false);
-                    }}
-                    defaultMonth={date}
-                />
-            </PopoverContent>
-        </Popover>
+        <Controller
+            name="date"
+            control={control}
+            rules={{ required: { value: true, message: "Pick a Date" } }}
+            render={({ field, fieldState }) => (
+                <>
+                    <Popover open={trigger} onOpenChange={setTrigger}>
+                        <PopoverTrigger render={
+                            <Button
+                                variant={"outline"}
+                                data-empty={!field.value}
+                                className={cn("justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-md",
+                                    fieldState.error && "border-red-600"
+                                )}
+                            >
+                                {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
+                                <ChevronDownIcon data-icon="inline-end" />
+                            </Button>
+                        }
+                        />
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={field.value ? new Date(field.value) : undefined}
+                                onSelect={field.onChange}
+                                defaultMonth={field.value ? new Date(field.value) : undefined}
+                                disabled={{
+                                    before: new Date(new Date().setHours(0, 0, 0, 0))
+                                }}
+                            />
+                        </PopoverContent>
+                    </Popover>
+                    {
+                        fieldState.error && (
+                            <Label className="text-red-600">
+                                {fieldState.error.message}
+                            </Label>
+                        )
+                    }
+                </>
+            )}
+        />
     )
 }
 export { DatePicker }

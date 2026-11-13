@@ -22,9 +22,9 @@ const AppointmentCard = ({ doctor_name, patient_name, date, time, status }: { do
                     <div className="w-full flex justify-evenly items-center font-semibold">
                         {status}
                     </div>
-                    <div className="w-full flex justify-evenly items-center">
-                        <Button className="lg:w-10 h-auto aspect-square p-2 border border-red-500 rounded-md bg-transparent text-red-500 hover:bg-red-500/50 hover:cursor-pointer hover:text-white"><CalendarX className="w-12 h-12" /></Button>
-                        <Button className="lg:w-10 h-auto aspect-square p-2 border border-green-500 rounded-md bg-transparent text-green-500 hover:bg-green-500/50 hover:cursor-pointer hover:text-white"><CalendarCheck /></Button>
+                    <div className="w-full flex justify-center items-center gap-2">
+                        <Button className="h-auto aspect-square p-2 border border-red-700/50 rounded-md bg-transparent text-red-700/50 hover:bg-red-700/50 hover:cursor-pointer hover:text-white"><CalendarX /></Button>
+                        <Button className="h-auto aspect-square p-2 border border-green-700/50 rounded-md bg-transparent text-green-700/50 hover:bg-green-700/50 hover:cursor-pointer hover:text-white"><CalendarCheck /></Button>
                     </div>
                 </CardContent>
             </Card>

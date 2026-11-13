@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 import { Button } from "@/shared/components/ui/button";
@@ -12,6 +11,7 @@ import { Filter, Plus } from "lucide-react";
 import { doctors } from "@/shared/constants/datasets/doctors";
 
 import { mockAppointments } from "@/shared/constants/datasets/mockAppointmentData";
+import { StatisticsCard } from "@/shared/components/statisticsCard";
 
 type mock = {
     id: number,
@@ -34,7 +34,7 @@ const status = [
         value: "completed",
         label: "Completed"
     },
-    
+
 ]
 
 const AppointmentPage = () => {
@@ -59,9 +59,17 @@ const AppointmentPage = () => {
     return (
         <section className="px-10 py-5 flex flex-col gap-2">
             <Toaster richColors />
+            <div className="flex gap-2">
+                <StatisticsCard title="Total" count={9} />
+                <StatisticsCard title="Cancelled" count={2} />
+                <StatisticsCard title="Completed" count={3} />
+            </div>
             <div className="w-full flex justify-end items-center gap-2">
+                <div className="grow">
+                    <h1 className="font-bold text-2xl">Appointments Table</h1>
+                </div>
                 <Select value={filter} onValueChange={(value) => setFilter(value ?? "")}>
-                    <SelectTrigger className={`w-1/3 lg:w-50 border border-black/30 px-2 rounded-md`}>
+                    <SelectTrigger className={`grow lg:w-50 border border-black/30 px-2 rounded-md`}>
                         <Filter /> <SelectValue placeholder={"Filter"} />
                     </SelectTrigger>
                     <SelectContent>
@@ -75,7 +83,7 @@ const AppointmentPage = () => {
                         </SelectGroup>
                         <SelectGroup>
                             <h6 className="text-sm font-semibold text-black/50 px-2 py-2 border-b">By Status</h6>
-                            {status.map((item)=> (
+                            {status.map((item) => (
                                 <SelectItem key={item.value} value={item.label}>
                                     {item.label}
                                 </SelectItem>
@@ -97,7 +105,7 @@ const AppointmentPage = () => {
                 setDialogTrigger={setDialogTrigger}
             />
             {
-                filteredData ? filteredData?.map(({ id, doctor_name, patient_name, date, time, status }) => (
+                filteredData.length > 0 ? filteredData?.map(({ id, doctor_name, patient_name, date, time, status }) => (
                     <AppointmentCard key={id} doctor_name={doctor_name} patient_name={patient_name} date={date} time={time} status={status} />
                 )) : <p>Loading...</p>
             }

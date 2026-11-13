@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Noto_Sans, Playfair_Display } from "next/font/google
 import "./globals.css";
 import { cn } from "@/shared/lib/utils";
 import ReduxStoreProvider from "@/shared/lib/ReduxStoreProvider";
+import { Header } from "@/shared/components/header";
 
 const playfairDisplayHeading = Playfair_Display({ subsets: ['latin'], variable: '--font-heading' });
 
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ReduxStoreProvider>
+          <Header/>
           {children}
         </ReduxStoreProvider>
       </body>
