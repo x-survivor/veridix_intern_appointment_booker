@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import { Button } from "@/shared/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/shared/components/ui/select";
@@ -10,17 +10,11 @@ import { AppointmentCard } from "@/shared/components/appointmendCard";
 import { Filter, Plus } from "lucide-react";
 import { doctors } from "@/shared/constants/datasets/doctors";
 
-import { mockAppointments } from "@/shared/constants/datasets/mockAppointmentData";
 import { StatisticsCard } from "@/shared/components/statisticsCard";
+import getAllData from "./services/getAllData";
+import { appointment } from "@/shared/constants/types/appointmentType";
 
-type mock = {
-    id: number,
-    doctor_name: string,
-    patient_name: string,
-    date: string,
-    time: string,
-    status: string,
-}
+
 const status = [
     {
         value: "booked",
@@ -40,21 +34,36 @@ const status = [
 const AppointmentPage = () => {
     const [dialogTrigger, setDialogTrigger] = useState(false);
     const [filter, setFilter] = useState<string>("");
-    const [filteredData, setFilteredData] = useState<mock[]>(mockAppointments);
+    const [filteredData, setFilteredData] = useState<appointment[]>([]);
+    const [fetchedData, setFetchedData] = useState<appointment[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getAllData();
+                console.log(data?.rows)
+                setFetchedData(data?.rows ?? []);
+            } catch (error) {
+                console.error("Failed to fetch appointments", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const filterData = () => {
             if (filter == "") {
-                setFilteredData(mockAppointments);
+                setFilteredData(fetchedData);
                 return;
             }
-            const filteredArray = mockAppointments.filter((item) => (
+            const filteredArray = fetchedData.filter((item) => (
                 item.doctor_name == filter || item.status == filter
             ))
             setFilteredData(filteredArray);
         }
         filterData();
-    }, [filter])
+    }, [filter, fetchedData])
 
     return (
         <section className="px-10 py-5 flex flex-col gap-2">
@@ -104,11 +113,13 @@ const AppointmentPage = () => {
                 dialogTrigger={dialogTrigger}
                 setDialogTrigger={setDialogTrigger}
             />
-            {
-                filteredData.length > 0 ? filteredData?.map(({ id, doctor_name, patient_name, date, time, status }) => (
-                    <AppointmentCard key={id} doctor_name={doctor_name} patient_name={patient_name} date={date} time={time} status={status} />
-                )) : <p>Loading...</p>
-            }
+            <Suspense fallback={<p>Loading...</p>}>
+                {
+                    filteredData.length > 0 && filteredData?.map(({ id, doctor_name, patient_name, date, start_time, status }) => (
+                        <AppointmentCard key={id} doctor_name={doctor_name} patient_name={patient_name} date={date} time={start_time} status={status} />
+                    ))
+                }
+            </Suspense>
         </section>
     );
 };
