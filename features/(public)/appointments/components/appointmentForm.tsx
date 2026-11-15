@@ -23,6 +23,7 @@ import { Reason } from "./formComponents/reason";
 const ApplicationForm = ({ dialogTrigger, setDialogTrigger }: { dialogTrigger: boolean, setDialogTrigger: (value: boolean) => void }) => {
     const initialValues = useAppSelector((state) => state.form);
     const methods = useForm<appointmentFormType>({ defaultValues: initialValues });
+    const submitting = methods.formState.isSubmitting;
 
     return (
         <FormProvider {...methods}>
@@ -38,7 +39,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger }: { dialogTrigger: b
                         <DoctorName />
                         <Reason />
                         <div className="flex flex-col justify-center items-start gap-2">
-                            <Button className={`w-full rounded-md bg-black/95 hover:bg-black/90 cursor-pointer`} type="submit">
+                            <Button disabled={submitting} className={`w-full rounded-md bg-black/95 hover:bg-black/90 cursor-pointer`} type="submit">
                                 Submit
                             </Button>
                         </div>

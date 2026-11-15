@@ -1,15 +1,13 @@
 
 import { z } from "zod";
+import { parse, isValid, format } from "date-fns";
 
 const isValidDate = (value: string) => {
-  const [year, month, day] = value.split("-").map(Number);
-
-  const date = new Date(Date.UTC(year, month - 1, day));
+  const date = parse(value, "MMMM do, yyyy", new Date());
 
   return (
-    date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month - 1 &&
-    date.getUTCDate() === day
+    isValid(date) &&
+    format(date, "MMMM do, yyyy") === value
   );
 };
 
@@ -32,14 +30,13 @@ export const appointmentSchema = z.object({
     .max(100, "Doctor name cannot exceed 100 characters"),
 
   date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format")
-    .refine(isValidDate, "Invalid calendar date"),
+  .string()
+  .refine(isValidDate, "Invalid date"),
 
   start_time: z
     .string()
     .regex(
-      /^(?:[01]\d|2[0-3]):[0-5]\d$/,
+      /^(0[1-9]|1[0-2]):[0-5]\d\s(AM|PM)$/,
       "Invalid time format"
     ),
 

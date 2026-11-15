@@ -2,12 +2,9 @@ import { NextRequest, NextResponse as res } from "next/server";
 import db from "@/shared/lib/database/db";
 import { appointmentSchema } from "@/shared/schemas/appointmentSchema";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const [rows] = await db.execute("SELECT * FROM appointments");
-
-    console.log("Database connected:", rows);
-
     return res.json({ success: true, rows });
   } catch (error) {
     console.error("Database connection failed:", error);

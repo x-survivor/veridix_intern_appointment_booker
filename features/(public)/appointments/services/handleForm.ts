@@ -14,8 +14,8 @@ const SubmitForm = async (data: appointmentFormType) => {
     patient_phone: data.patient_phone,
     doctor_name: data.doctor_name,
     duration: data.duration,
-    date: format(data.date, "yyyy-MM-dd"),
-    start_time: format(date, "hh:mm"),
+    date: format(data.date, "MMMM do, yyyy"),
+    start_time: format(date, "hh:mm a"),
     reason: data.reason,
   };
   console.log(AppointSubmitData);
