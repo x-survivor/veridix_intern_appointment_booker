@@ -129,3 +129,10 @@
     @apply font-sans;
   }
 }
+
+table{
+  width: 100%;
+}
+table tr{
+  padding: 1.5% 1%;
+}

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form"
 
 import {
@@ -20,10 +21,18 @@ import { SubmitForm } from "../services/handleForm";
 import { Reason } from "./formComponents/reason";
 
 
-const ApplicationForm = ({ dialogTrigger, setDialogTrigger }: { dialogTrigger: boolean, setDialogTrigger: (value: boolean) => void }) => {
+const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogTrigger: boolean, setDialogTrigger: (value: boolean) => void, refetch: () => Promise<void> }) => {
     const initialValues = useAppSelector((state) => state.form);
     const methods = useForm<appointmentFormType>({ defaultValues: initialValues });
     const submitting = methods.formState.isSubmitting;
+    const submitted = methods.formState.isSubmitSuccessful;
+
+    useEffect(() => {
+        if (submitted) {
+            setDialogTrigger(false);
+            refetch();
+        };
+    }, [submitted, setDialogTrigger, refetch]);
 
     return (
         <FormProvider {...methods}>

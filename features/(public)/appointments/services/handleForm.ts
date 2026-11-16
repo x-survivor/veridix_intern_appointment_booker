@@ -18,7 +18,6 @@ const SubmitForm = async (data: appointmentFormType) => {
     start_time: format(date, "hh:mm a"),
     reason: data.reason,
   };
-  console.log(AppointSubmitData);
   try {
     const response = await axios.post("/api/appointments", AppointSubmitData);
 

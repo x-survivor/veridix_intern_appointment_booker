@@ -23,6 +23,7 @@ const Duration = () => {
                         min={15}
                         step={15}
                         {...register("duration", {
+                            valueAsNumber: true,
                             required: { value: true, message: "Fill in Duration" }
                         })}
                     />

@@ -3,8 +3,8 @@ import { Suspense, useState } from "react";
 import { cn } from "@/shared/lib/utils"
 
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent } from "@/shared/components/ui/card"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/shared/components/ui/select";
+import { Spinner } from "@/shared/components/ui/spinner";
 
 import { Toaster } from "@/shared/components/ui/sonner";
 import { ApplicationForm } from "./components/appointmentForm";
@@ -36,21 +36,28 @@ const status = [
 const AppointmentPage = () => {
     const [dialogTrigger, setDialogTrigger] = useState(false);
     const [filter, setFilter] = useState<string>("");
-    const {filteredData} = useData(filter);
+    const { filteredData, loading, error, refetch } = useData(filter);
+
+    const cancelledAppointments = filteredData.filter((data) => (
+        data.status == "cancelled"
+    )).length
+    const completedAppointments = filteredData.filter((data) => (
+        data.status == "completed"
+    )).length
 
     return (
         <section className="px-5 xl:px-30 py-5 flex flex-col gap-2">
             <Toaster richColors />
-            <div className="flex gap-2">
-                <StatisticsCard title="Total" count={9} />
-                <StatisticsCard title="Cancelled" count={2} />
-                <StatisticsCard title="Completed" count={3} />
+            <div className="flex flex-col lg:flex-row gap-2">
+                <StatisticsCard title="Total" count={filteredData.length} />
+                <StatisticsCard title="Cancelled" count={cancelledAppointments} />
+                <StatisticsCard title="Completed" count={completedAppointments} />
             </div>
             <div className="w-full flex flex-col-reverse md:flex-row justify-end items-center gap-2">
                 <div className="grow">
                     <h1 className="font-bold lg:text-xl w-1/6 text-nowrap">Appointments Table</h1>
                 </div>
-                <Button onClick={() => setFilter("")} variant="destructive" className={cn("hidden rounded-md w-full md:w-1/12", filter !== "" && "flex" )}>Reset</Button>
+                <Button onClick={() => setFilter("")} variant="destructive" className={cn("hidden rounded-md w-full md:w-1/12", filter !== "" && "flex")}>Reset</Button>
                 <Select value={filter} onValueChange={(value) => setFilter(value ?? "")}>
                     <SelectTrigger className={`max-w-full w-full grow lg:w-1/6 border border-black/30 px-2 rounded-md`}>
                         <Filter /> <SelectValue placeholder={"Filter"} />
@@ -85,51 +92,67 @@ const AppointmentPage = () => {
             <ApplicationForm
                 dialogTrigger={dialogTrigger}
                 setDialogTrigger={setDialogTrigger}
+                refetch={refetch}
             />
             <header className="hidden lg:flex flex-col gap-2">
-                <Card className="shadow-transparent rounded-md py-4">
-                    <CardContent className="flex gap-6 justify-evenly font-bold">
-                        <div className="w-full flex justify-evenly items-center text-black/50">
-                            Appointment Date
-                        </div>
-                        <div className="w-full flex justify-evenly items-center text-black/50">
-                            Patient Name
-                        </div>
-                        <div className="w-full flex justify-evenly items-center text-black/50">
-                            Doctor Name
-                        </div>
-                        <div className="w-full flex justify-evenly items-center text-black/50">
-                            Start Time
-                        </div>
-                        <div className="w-full flex justify-evenly items-center text-black/50">
-                            Status
-                        </div>
-                        <div className="w-full flex justify-center items-center text-black/50">
-                            Update
-                        </div>
-                    </CardContent>
-                </Card>
-                <Suspense fallback={<p>Loading...</p>}>
-                    {
+                <table className="w-full">
+                    <thead>
+                        <tr className="flex gap-6 justify-evenly font-bold bg-gray-200 text-gray-800 rounded-md mt-5">
+                            <td className="w-full flex justify-evenly items-center">
+                                Appointment Date
+                            </td>
+                            <td className="w-full flex justify-evenly items-center">
+                                Patient Name
+                            </td>
+                            <td className="w-full flex justify-evenly items-center">
+                                Doctor Name
+                            </td>
+                            <td className="w-full flex justify-evenly items-center">
+                                Start Time
+                            </td>
+                            <td className="w-full flex justify-evenly items-center">
+                                Status
+                            </td>
+                            <td className="w-full flex justify-center items-center">
+                                Update
+                            </td>
+                        </tr>
+                    </thead>
+                    {!loading ?
                         filteredData.length > 0 && filteredData?.map((data) => (
-                            <div key={data.id}>
+                            <tbody key={data.id}>
                                 <AppointmentCard {...data} />
-                            </div>
-                        ))
+                            </tbody>
+                        )) : !error ? (
+                            <tbody className="w-full h-30 flex justify-center items-center">
+                                <tr className="w-full h-30 flex justify-center items-center">
+                                    <td>
+                                        <Spinner className="w-15 h-15" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        ) :
+                            <tbody className="w-full h-30 flex justify-center items-center">
+                                <tr className="w-full h-30 flex justify-center items-center">
+                                    <td>
+                                        {error instanceof Error ? error.message : "Something Went Wrong"}
+                                    </td>
+                                </tr>
+                            </tbody>
                     }
-                </Suspense>
+                </table>
             </header>
             <header className="flex lg:hidden flex-col gap-2">
-
-                <Suspense fallback={<p>Loading...</p>}>
-                    {
-                        filteredData.length > 0 && filteredData?.map((data) => (
-                            <section key={data.id}>
-                                <ResponsiveAppointmentCard {...data} />
-                            </section >
-                        ))
-                    }
-                </Suspense >
+                {!loading ?
+                    filteredData.length > 0 && filteredData?.map((data) => (
+                        <section key={data.id}>
+                            <ResponsiveAppointmentCard {...data} />
+                        </section >
+                    )) :
+                    <section className="w-full h-30 flex justify-center items-center">
+                        <Spinner className="w-10 h-10" />
+                    </section>
+                }
             </header >
         </section>
     );
