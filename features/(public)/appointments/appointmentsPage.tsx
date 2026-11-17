@@ -1,33 +1,35 @@
 "use client";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/shared/lib/utils"
 
 import { Button } from "@/shared/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/shared/components/ui/select";
 import { Spinner } from "@/shared/components/ui/spinner";
 
 import { Toaster } from "@/shared/components/ui/sonner";
 import { ApplicationForm } from "./components/appointmentForm";
 import { AppointmentCard } from "@/shared/components/appointmendCard";
-import { Filter, Plus } from "lucide-react";
-import { doctors } from "@/shared/constants/datasets/doctors";
+import { Plus } from "lucide-react";
 
 import { StatisticsCard } from "@/shared/components/statisticsCard";
 import { ResponsiveAppointmentCard } from "@/shared/components/responsiveAppointmentCard";
 import useData from "./hooks/useData";
-
+import { FilterSelection } from "./components/filterSelection";
+import { doctors } from "@/shared/constants/datasets/doctors";
+import type {filter} from "@/shared/constants/types/filterType";
+import { InitalFilter } from "@/shared/constants/datasets/initialFilter";
+import { DatePicker } from "@/shared/components/datePicker";
 
 const status = [
     {
-        value: "booked",
+        name: "booked",
         label: "Booked"
     },
     {
-        value: "cancelled",
+        name: "cancelled",
         label: "Cancelled"
     },
     {
-        value: "completed",
+        name: "completed",
         label: "Completed"
     },
 
@@ -35,8 +37,10 @@ const status = [
 
 const AppointmentPage = () => {
     const [dialogTrigger, setDialogTrigger] = useState(false);
-    const [filter, setFilter] = useState<string>("");
+    const [filter, setFilter] = useState<filter>(InitalFilter);
     const { filteredData, loading, error, refetch } = useData(filter);
+
+    console.log(filter);
 
     const cancelledAppointments = filteredData.filter((data) => (
         data.status == "cancelled"
@@ -46,7 +50,7 @@ const AppointmentPage = () => {
     )).length
 
     return (
-        <section className="px-5 xl:px-30 py-5 flex flex-col gap-2">
+        <section className="w-full px-10 flex flex-col gap-2 overflow-auto">
             <Toaster richColors />
             <div className="flex flex-col lg:flex-row gap-2">
                 <StatisticsCard title="Total" count={filteredData.length} />
@@ -54,37 +58,10 @@ const AppointmentPage = () => {
                 <StatisticsCard title="Completed" count={completedAppointments} />
             </div>
             <div className="w-full flex flex-col-reverse md:flex-row justify-end items-center gap-2">
-                <div className="grow">
-                    <h1 className="font-bold lg:text-xl w-1/6 text-nowrap">Appointments Table</h1>
-                </div>
-                <Button onClick={() => setFilter("")} variant="destructive" className={cn("hidden rounded-md w-full md:w-1/12", filter !== "" && "flex")}>Reset</Button>
-                <Select value={filter} onValueChange={(value) => setFilter(value ?? "")}>
-                    <SelectTrigger className={`max-w-full w-full grow lg:w-1/6 border border-black/30 px-2 rounded-md`}>
-                        <Filter /> <SelectValue placeholder={"Filter"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <h6 className="text-sm font-semibold text-black/50 px-2 py-2 border-b">By Doctor Name</h6>
-                            {doctors && doctors.map((doctor) => (
-                                <SelectItem key={doctor.name} value={doctor.name}>
-                                    {doctor.name}
-                                </SelectItem>
-                            ))}
-                        </SelectGroup>
-                        <SelectGroup>
-                            <h6 className="text-sm font-semibold text-black/50 px-2 py-2 border-b">By Status</h6>
-                            {status.map((item) => (
-                                <SelectItem key={item.value} value={item.value}>
-                                    {item.label}
-                                </SelectItem>
-                            ))}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                <Button onClick={() => setFilter(InitalFilter)} variant="destructive" className={cn("hidden rounded-md w-full md:w-1/12", filter !== InitalFilter && "flex")}>Reset</Button>
                 <Button
-                    variant="ghost"
                     onClick={() => setDialogTrigger(true)}
-                    className="w-full md:w-1/4 rounded-md bg-gray-800 text-white hover:bg-black/30 hover:cursor-pointer"
+                    className="rounded-full bg-accent text-accent-foreground hover:cursor-pointer hover:bg-accent/95"
                 >
                     <Plus />Appointment
                 </Button>
@@ -94,38 +71,48 @@ const AppointmentPage = () => {
                 setDialogTrigger={setDialogTrigger}
                 refetch={refetch}
             />
-            <header className="hidden lg:flex flex-col gap-2">
+            <div className="hidden lg:flex flex-col gap-2 px-4 rounded-md h-[calc(50vh+50px)] overflow-auto bg-sidebar scrollbar-thin scrollbar-track-sidebar scrollbar-thumb-foreground">
                 <table className="w-full">
-                    <thead>
-                        <tr className="flex gap-6 justify-evenly font-bold bg-gray-200 text-gray-800 rounded-md mt-5">
-                            <td className="w-full flex justify-evenly items-center">
-                                Appointment Date
+                    <thead className="sticky top-0 bg-sidebar">
+                        <tr>
+                            <td className="flex justify-between py-4">
+                                <h1 className="font-bold lg:text-xl w-1/6 text-nowrap">Appointments Table</h1>
+                                <section className="flex w-1/2 justify-end gap-2">
+                                    <FilterSelection filter={filter?.filterByDoctor} setFilter={setFilter} data={doctors} title="Doctor Name" />
+                                    <FilterSelection filter={filter?.filterByStatus} setFilter={setFilter} data={status} title="Status" />
+                                    <DatePicker filter={filter?.filterByDate} setFilter={setFilter}/>
+                                </section>
                             </td>
-                            <td className="w-full flex justify-evenly items-center">
+                        </tr>
+                        <tr className="flex gap-6 justify-evenly font-bold border-b border-b-gray-800 mt-2 pb-2">
+                            <td className="w-full flex justify-start items-start">
                                 Patient Name
                             </td>
-                            <td className="w-full flex justify-evenly items-center">
-                                Doctor Name
+                            <td className="w-full flex justify-start items-start">
+                                Appointment Date
                             </td>
                             <td className="w-full flex justify-evenly items-center">
                                 Start Time
                             </td>
                             <td className="w-full flex justify-evenly items-center">
-                                Status
+                                Doctor Name
                             </td>
                             <td className="w-full flex justify-center items-center">
-                                Update
+                                Change Status
+                            </td>
+                            <td className="w-full flex justify-evenly items-center">
+                                Status
                             </td>
                         </tr>
                     </thead>
                     {!loading ?
                         filteredData.length > 0 && filteredData?.map((data) => (
                             <tbody key={data.id}>
-                                <AppointmentCard {...data} />
+                                <AppointmentCard data={data} refetch={refetch} />
                             </tbody>
                         )) : !error ? (
-                            <tbody className="w-full h-30 flex justify-center items-center">
-                                <tr className="w-full h-30 flex justify-center items-center">
+                            <tbody className="w-full h-80 flex justify-center items-center">
+                                <tr className="w-full h-full flex justify-center items-center">
                                     <td>
                                         <Spinner className="w-15 h-15" />
                                     </td>
@@ -141,19 +128,19 @@ const AppointmentPage = () => {
                             </tbody>
                     }
                 </table>
-            </header>
-            <header className="flex lg:hidden flex-col gap-2">
+            </div>
+            <div className="flex lg:hidden flex-col gap-2">
                 {!loading ?
                     filteredData.length > 0 && filteredData?.map((data) => (
                         <section key={data.id}>
-                            <ResponsiveAppointmentCard {...data} />
+                            <ResponsiveAppointmentCard data={data} refetch={refetch} />
                         </section >
                     )) :
                     <section className="w-full h-30 flex justify-center items-center">
                         <Spinner className="w-10 h-10" />
                     </section>
                 }
-            </header >
+            </div>
         </section>
     );
 };

@@ -20,7 +20,7 @@ const PatientPhone = () => {
                     <Label>Patient Contact</Label>
                     <Input
                         type="tel"
-                        className={cn("rounded-md px-2 border border-black/30 placeholder:text-black/20",
+                        className={cn("rounded-xl px-2 border border-black/30 placeholder:text-black/20",
                             error && "border-red-600"
                         )}
                         placeholder="+92 318 0000211"

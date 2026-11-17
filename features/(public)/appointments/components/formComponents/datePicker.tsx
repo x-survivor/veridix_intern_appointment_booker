@@ -31,7 +31,7 @@ const DatePicker = ({ trigger, setTrigger }: { trigger: boolean, setTrigger: (ar
                             <Button
                                 variant={"outline"}
                                 data-empty={!field.value}
-                                className={cn("justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-md",
+                                className={cn("justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-xl",
                                     fieldState.error && "border-red-600"
                                 )}
                             >

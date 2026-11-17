@@ -5,41 +5,54 @@ import { Label } from "./ui/label"
 import { appointment } from "../constants/types/appointmentType"
 import { updateStatus } from "@/features/(public)/appointments/services/updateStatus"
 
-const AppointmentCard = ({ id, doctor_name, patient_name, date, start_time, status }: appointment) => {
+const AppointmentCard = ({ data, refetch }: { data: appointment, refetch: () => Promise<void> }) => {
     return (
         <>
-            <tr className="max-w-full flex items-center gap-6">
-                <td className="w-full flex flex-col justify-evenly items-center">
+            <tr className="max-w-full flex items-center">
+                <td className="w-full flex justify-start items-start text-lg font-semibold">
+                    {data.patient_name}
+                </td>
+                <td className="w-full flex flex-col justify-evenly align-text-start">
                     <div>
-                        {date}
+                        {data.date}
                     </div>
                 </td>
-                <td className="w-full flex justify-evenly items-center text-lg font-semibold">
-                    {patient_name}
+                <td className="w-full flex justify-evenly items-center">
+                    {data.start_time}
                 </td>
                 <td className="w-full flex justify-evenly items-center">
-                    {doctor_name}
+                    {data.doctor_name}
                 </td>
-                <td className="w-full flex justify-evenly items-center">
-                    {start_time}
+                <td className="w-full justify-evenly items-center gap-2">
+                    <div className={cn("hidden w-full justify-center items-center gap-2",
+                        data.status == "booked" && "flex"
+                    )}>
+                        <Button
+                            onClick={() => {
+                                updateStatus(data.id, "completed", refetch);
+                            }}
+                            className="w-1/2 p-2 h-auto border rounded-md text-muted-foreground bg-muted hover:cursor-pointer hover:bg-accent">
+                            <Check />
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                updateStatus(data.id, "cancelled", refetch)
+                            }}
+                            className="w-1/2 p-2 h-auto border rounded-md bg-transparent text-destructive  hover:cursor-pointer hover:text-white hover:bg-muted">
+                            <Trash />
+                        </Button>
+                    </div>
                 </td>
                 <td className="w-full flex justify-evenly items-center font-semibold">
                     <Label className={cn("px-2 py-1",
-                        status == "booked" && "bg-blue-600/20 border border-blue-600/70 rounded-full text-blue-700",
-                        status == "cancelled" && "bg-red-600/20 border border-red-600/70 rounded-full text-red-700",
-                        status == "completed" && "bg-green-600/20 border border-green-600/70 rounded-full text-green-700",
+                        data.status == "booked" && "bg-status-booked rounded-full text-success-foreground",
+                        data.status == "cancelled" && "bg-status-cancelled rounded-full text-destructive-foreground",
+                        data.status == "completed" && "bg-status-completed rounded-full text-success-foreground",
                     )}>
-                        {status}
+                        {data.status}
                     </Label>
                 </td>
-                <td className="w-full justify-center items-center gap-2">
-                    <div className={cn("hidden w-full justify-center items-center gap-2",
-                        status == "booked" && "flex"
-                    )}>
-                        <Button onClick={() => updateStatus(id, "completed")} className="w-1/2 p-2 h-auto border rounded-md text-white bg-gray-800 hover:cursor-pointer hover:bg-gray-800/80"><Check /></Button>
-                        <Button onClick={() => updateStatus(id, "cancelled")} className="w-1/2 p-2 h-auto border rounded-md bg-transparent text-red-700/50 hover:bg-red-700/50 hover:cursor-pointer hover:text-white"><Trash /></Button>
-                    </div>
-                </td>
+                
             </tr>
         </>
     )

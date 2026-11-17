@@ -12,7 +12,7 @@ const Reason = () => {
             <Label>Reason</Label>
             <Input
                 type="text"
-                className="rounded-md px-2 border border-black/30 placeholder:text-black/20"
+                className="rounded-xl px-2 border border-black/30 placeholder:text-black/20"
                 placeholder="Reason"
                 {...register("reason")}
             />

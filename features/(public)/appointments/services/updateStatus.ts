@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "sonner";
 
-const updateStatus = async (id: string, status: "cancelled" | "completed") => {
+const updateStatus = async (id: string, status: "cancelled" | "completed", refetch:()=>Promise<void>) => {
   if (!status) {
     return;
   }
@@ -11,6 +11,7 @@ const updateStatus = async (id: string, status: "cancelled" | "completed") => {
     });
     console.log(response.data);
     toast.success(`Status Update to ${status}`);
+    refetch();
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Status:", error.response?.status);

@@ -48,7 +48,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
                         <DoctorName />
                         <Reason />
                         <div className="flex flex-col justify-center items-start gap-2">
-                            <Button disabled={submitting} className={`w-full rounded-md bg-black/95 hover:bg-black/90 cursor-pointer`} type="submit">
+                            <Button disabled={submitting} className={`w-full rounded-xl bg-blue-800/95 hover:bg-blue-800/90 cursor-pointer`} type="submit">
                                 Submit
                             </Button>
                         </div>
