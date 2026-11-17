@@ -124,9 +124,9 @@ The application uses Next.js Route Handlers to manage appointment data.
 |---|---|---|
 | GET | `/api/appointments` | Retrieve all appointments |
 | POST | `/api/appointments` | Create a new appointment |
-| GET | `/api/appointments/:id` | Retrieve an appointment by ID |
-| PATCH | `/api/appointments/:id` | Update an appointment's status |
-| GET | `/api/appointments/available-slots` | Retrieve existing appointments for a doctor and date |
+| GET | `/api/appointments/[id]` | Retrieve an appointment by ID |
+| PATCH | `/api/appointments/[id]` | Update an appointment's status |
+| GET | `/api/appointments/available-slots` | Retrieve 30 minutes availability slots |
 
 ### Create Appointment
 
@@ -150,7 +150,7 @@ The API validates incoming data using Zod before inserting the appointment into 
 
 ### Update Appointment Status
 
-**Endpoint:** `PATCH /api/appointments/:id`
+**Endpoint:** `PATCH /api/appointments/[id]`
 
 The endpoint is used to update an appointment's status.
 
@@ -209,10 +209,11 @@ features/
 shared/
 ├── components/
 ├── constants/
+|   ├── types/
+|   ├── datasets/  
 ├── lib/
 │   ├── database/
 │   └── ReduxStore.ts
-└── types/
 ```
 
 ## Development Notes
