@@ -37,7 +37,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
     return (
         <FormProvider {...methods}>
             <Dialog open={dialogTrigger} onOpenChange={() => setDialogTrigger(false)}>
-                <DialogContent className="rounded-2xl bg-white/80">
+                <DialogContent className="rounded-2xl bg-background text-foreground">
                     <DialogHeader>
                         <DialogTitle>Appointment Form</DialogTitle>
                     </DialogHeader>
@@ -48,7 +48,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
                         <DoctorName />
                         <Reason />
                         <div className="flex flex-col justify-center items-start gap-2">
-                            <Button disabled={submitting} className={`w-full rounded-xl bg-blue-800/95 hover:bg-blue-800/90 cursor-pointer`} type="submit">
+                            <Button disabled={submitting} className={`w-full rounded-md bg-accent hover:bg-accent/95 cursor-pointer`} type="submit">
                                 Submit
                             </Button>
                         </div>

@@ -12,6 +12,7 @@ export default function useData(filter?: filter) {
   const [error, setError] = useState<unknown | null>(null);
 
   const refetch = useCallback(async () => {
+    setLoading(true);
     try {
       const data = await getAllData();
       if (data.rows <= 0) {
@@ -28,7 +29,6 @@ export default function useData(filter?: filter) {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       refetch();
     };
     fetchData();

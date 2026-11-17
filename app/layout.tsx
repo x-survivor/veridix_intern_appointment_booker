@@ -7,6 +7,7 @@ import { Header } from "@/shared/components/header";
 import Logo from "@/shared/components/logoSVG";
 import { Input } from "@/shared/components/ui/input";
 import { Search } from "lucide-react"
+import { ResponsiveHeader } from "@/shared/components/responsive/resposiveHeader";
 
 const playfairDisplayHeading = Playfair_Display({ subsets: ['latin'], variable: '--font-heading' });
 
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </header>
             {children}
           </section>
+          <ResponsiveHeader />
         </ReduxStoreProvider>
       </body>
     </html>

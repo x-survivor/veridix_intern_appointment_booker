@@ -1,4 +1,4 @@
-import { CalendarCheck2 } from 'lucide-react';
+import { CalendarCheck2, CalendarX, Calendar } from 'lucide-react';
 import { Card, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { cn } from '../lib/utils';
 
@@ -10,7 +10,9 @@ const StatisticsCard = ({ title, count }: { title: string, count: number }) => {
             <CardHeader className='w-full flex justify-between md:justify-between items-center'>
                 <CardTitle className='flex items-center gap-2 text-lg'>
                     <span className={cn("text-gray-800 p-1 px-2 rounded-sm border border-gray-800 mr-2")}>
-                        <CalendarCheck2 className='w-4' />
+                        {title == "Total" && <Calendar className='w-5' />}
+                        {title == "Cancelled" && <CalendarX className='w-5' />}
+                        {title == "Completed" && <CalendarCheck2 className='w-5' />}
                     </span>
                     {title}
                 </CardTitle>

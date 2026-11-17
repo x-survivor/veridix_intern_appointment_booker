@@ -2,7 +2,7 @@ import { NextRequest, NextResponse as res } from "next/server";
 import db from "@/shared/lib/database/db";
 
 export async function GET(
-  _: null,
+  _: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;

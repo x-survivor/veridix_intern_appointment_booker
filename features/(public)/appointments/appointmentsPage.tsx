@@ -8,16 +8,17 @@ import { Spinner } from "@/shared/components/ui/spinner";
 import { Toaster } from "@/shared/components/ui/sonner";
 import { ApplicationForm } from "./components/appointmentForm";
 import { AppointmentCard } from "@/shared/components/appointmendCard";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
 
 import { StatisticsCard } from "@/shared/components/statisticsCard";
-import { ResponsiveAppointmentCard } from "@/shared/components/responsiveAppointmentCard";
+import { ResponsiveAppointmentCard } from "@/shared/components/responsive/responsiveAppointmentCard";
 import useData from "./hooks/useData";
 import { FilterSelection } from "./components/filterSelection";
 import { doctors } from "@/shared/constants/datasets/doctors";
-import type {filter} from "@/shared/constants/types/filterType";
+import type { filter } from "@/shared/constants/types/filterType";
 import { InitalFilter } from "@/shared/constants/datasets/initialFilter";
 import { DatePicker } from "@/shared/components/datePicker";
+import { ResponsiveHeader } from "@/shared/components/responsive/resposiveHeader";
 
 const status = [
     {
@@ -57,15 +58,6 @@ const AppointmentPage = () => {
                 <StatisticsCard title="Cancelled" count={cancelledAppointments} />
                 <StatisticsCard title="Completed" count={completedAppointments} />
             </div>
-            <div className="w-full flex flex-col-reverse md:flex-row justify-end items-center gap-2">
-                <Button onClick={() => setFilter(InitalFilter)} variant="destructive" className={cn("hidden rounded-md w-full md:w-1/12", filter !== InitalFilter && "flex")}>Reset</Button>
-                <Button
-                    onClick={() => setDialogTrigger(true)}
-                    className="rounded-full bg-accent text-accent-foreground hover:cursor-pointer hover:bg-accent/95"
-                >
-                    <Plus />Appointment
-                </Button>
-            </div>
             <ApplicationForm
                 dialogTrigger={dialogTrigger}
                 setDialogTrigger={setDialogTrigger}
@@ -76,11 +68,26 @@ const AppointmentPage = () => {
                     <thead className="sticky top-0 bg-sidebar">
                         <tr>
                             <td className="flex justify-between py-4">
-                                <h1 className="font-bold lg:text-xl w-1/6 text-nowrap">Appointments Table</h1>
+                                <section className="flex items-center gap-3 font-bold lg:text-xl text-nowrap">
+                                    <h1>Appointments Table</h1>
+                                    <Button
+                                        onClick={refetch}
+                                        variant={"ghost"}
+                                        className={"hover:bg-sidebar hover:cursor-pointer shadow-sm p-1 aspect-square rounded-full hover:shadow-md"}>
+                                        <RefreshCw />
+                                    </Button>
+                                </section>
                                 <section className="flex w-1/2 justify-end gap-2">
+                                    <Button onClick={() => setFilter(InitalFilter)} variant="destructive" className={cn("flex rounded-md", filter === InitalFilter && "hidden")}>Reset All</Button>
                                     <FilterSelection filter={filter?.filterByDoctor} setFilter={setFilter} data={doctors} title="Doctor Name" />
                                     <FilterSelection filter={filter?.filterByStatus} setFilter={setFilter} data={status} title="Status" />
-                                    <DatePicker filter={filter?.filterByDate} setFilter={setFilter}/>
+                                    <DatePicker filter={filter?.filterByDate} setFilter={setFilter} />
+                                    <Button
+                                        onClick={() => setDialogTrigger(true)}
+                                        className="rounded-md bg-accent text-accent-foreground hover:cursor-pointer hover:bg-accent/95"
+                                    >
+                                        <Plus />Appointment
+                                    </Button>
                                 </section>
                             </td>
                         </tr>
@@ -107,7 +114,7 @@ const AppointmentPage = () => {
                     </thead>
                     {!loading ?
                         filteredData.length > 0 && filteredData?.map((data) => (
-                            <tbody key={data.id}>
+                            <tbody key={data.id} className="bg-background rounded-md">
                                 <AppointmentCard data={data} refetch={refetch} />
                             </tbody>
                         )) : !error ? (
@@ -141,6 +148,11 @@ const AppointmentPage = () => {
                     </section>
                 }
             </div>
+            <Button
+             onClick={()=>setDialogTrigger(!dialogTrigger)}
+             className="md:hidden fixed right-[10%] bottom-[15%] bg-accent ring-sidebar rounded-md flex justify-center items-center text-background">
+                <Plus className="scale-150" /> Appointment
+            </Button>
         </section>
     );
 };

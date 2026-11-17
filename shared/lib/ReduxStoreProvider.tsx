@@ -1,20 +1,26 @@
-
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
-import { makeStore, AppStore } from "@/shared/lib/ReduxStore";
+import { makeStore, AppStore } from "./ReduxStore";
 
 export default function ReduxStoreProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [storeInstance] = useState<AppStore | null>(()=> makeStore());
+  const [storeInstance, setStoreInstance] = useState<AppStore | null>(null);
+
+  useEffect(() => {
+    const setInstance = () => {
+      setStoreInstance(makeStore());
+    }
+    setInstance();
+  }, []);
 
   if (!storeInstance) {
     return null;
   }
 
-  return <Provider store={storeInstance}>{children}</Provider>
+  return <Provider store={storeInstance}>{children}</Provider>;
 }

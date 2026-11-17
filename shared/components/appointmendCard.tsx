@@ -31,14 +31,14 @@ const AppointmentCard = ({ data, refetch }: { data: appointment, refetch: () => 
                             onClick={() => {
                                 updateStatus(data.id, "completed", refetch);
                             }}
-                            className="w-1/2 p-2 h-auto border rounded-md text-muted-foreground bg-muted hover:cursor-pointer hover:bg-accent">
+                            className="w-1/2 p-2 h-auto border rounded-md text-muted-foreground bg-muted hover:cursor-pointer hover:bg-accent hover:text-background">
                             <Check />
                         </Button>
                         <Button
                             onClick={() => {
                                 updateStatus(data.id, "cancelled", refetch)
                             }}
-                            className="w-1/2 p-2 h-auto border rounded-md bg-transparent text-destructive  hover:cursor-pointer hover:text-white hover:bg-muted">
+                            className="w-1/2 p-2 h-auto border rounded-md bg-transparent text-destructive  hover:cursor-pointer hover:text-muted-foreground hover:bg-muted">
                             <Trash />
                         </Button>
                     </div>

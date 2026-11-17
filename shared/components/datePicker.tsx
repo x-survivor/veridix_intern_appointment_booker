@@ -1,7 +1,7 @@
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
 import { Calendar } from "./ui/calendar";
 import { Button } from "./ui/button";
-import { ChevronDownIcon, X } from "lucide-react"
+import { ChevronDownIcon, X, CalendarDays } from "lucide-react"
 import { format } from "date-fns";
 import { filter } from "../constants/types/filterType";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -21,10 +21,11 @@ const DatePicker = ({ filter, setFilter }: { filter: string, setFilter: Dispatch
                 <Button
                     variant={"outline"}
                     data-empty={!filter}
-                    className="justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-xl"
+                    className="justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-md"
 
                 >
-                    {filter ? filter : <span>Pick a date</span>}
+                    <CalendarDays/>
+                    {filter ? (filter) : <span>Filter By Date</span>}
                     <ChevronDownIcon data-icon="inline-end" />
                 </Button>
             }
@@ -42,7 +43,6 @@ const DatePicker = ({ filter, setFilter }: { filter: string, setFilter: Dispatch
                                 ))
                             setTrigger(false);
                         }}
-                    defaultMonth={filter ? new Date(filter) : undefined}
                 />
             </PopoverContent>
         </Popover>

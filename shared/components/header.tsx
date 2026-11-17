@@ -7,7 +7,7 @@ import { cn } from "../lib/utils"
 import Logo from "./logoSVG";
 
 const Header = () => {
-    const [isExtended, setIsExptended] = useState(true);
+    const [isExtended, setIsExptended] = useState(false);
     return (
         <>
             <section className={cn("w-1/6 h-screen shadow-xs hidden lg:flex flex-col justify-between items-center px-4 py-2 bg-sidebar text-sidebar-foreground transition-[width] duration-500 ease-in-out overflow-hidden",
