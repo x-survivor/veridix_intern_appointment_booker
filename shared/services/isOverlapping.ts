@@ -25,6 +25,7 @@ const isOverlapping = async (
 
     if (hasOverlap) {
       return {
+        status: true,
         message: "Doctor already has an appointment during this time.",
       };
     }

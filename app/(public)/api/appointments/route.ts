@@ -2,6 +2,8 @@ import { NextRequest, NextResponse as res } from "next/server";
 import db from "@/shared/lib/database/db";
 import { appointmentSchema } from "@/shared/schemas/appointmentSchema";
 import { convertTime } from "@/shared/utils/convertTimeIntoMs";
+import isOverlapping from "@/shared/services/isOverlapping";
+import { ResultSetHeader } from "mysql2";
 
 export async function GET() {
   try {
@@ -41,8 +43,18 @@ export async function POST(req: NextRequest) {
       reason,
     } = validation.data;
     const { startTime, endTime } = convertTime(date, start_time, duration);
+    const OverlapCheck = await isOverlapping(
+      startTime,
+      endTime,
+      doctor_name,
+      date,
+    );
 
-    await db.execute(
+    if (OverlapCheck?.status) {
+      return res.json(OverlapCheck, { status: 409 });
+    }
+
+    const [result] = await db.execute<ResultSetHeader>(
       "INSERT INTO appointments (id, patient_name, patient_phone, doctor_name, start_time, reason, status, created_at, duration, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         id,
@@ -57,6 +69,17 @@ export async function POST(req: NextRequest) {
         date,
       ].map((value) => value ?? null),
     );
+    if (result.affectedRows === 0) {
+      return res.json(
+        {
+          success: false,
+          message: "Failed to create Appointment",
+        },
+        {
+          status: 500,
+        },
+      );
+    }
 
     return res.json(
       {

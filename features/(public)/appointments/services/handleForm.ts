@@ -20,8 +20,8 @@ const SubmitForm = async (data: appointmentFormType) => {
   };
   try {
     const response = await axios.post("/api/appointments", AppointSubmitData);
-
     toast.success("Appointment recorded successfully", response.data.id);
+    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Status:", error.response?.status);
