@@ -19,9 +19,9 @@ const ResponsiveAppointmentCard = ({data, refetch}: {data:appointment, refetch:(
                     <div>
                         <Label className={cn(
                             "px-2 py-0.5 rounded-full",
-                            data.status == "booked" && "bg-blue-600/30 text-blue-700 border border-blue-600/50",
-                            data.status == "cancelled" && "bg-status-cancelled text-foreground border border-red-600/50",
-                            data.status == "completed" && "bg-green-600/30 text-green-700 border border-green-600/50",
+                            data.status == "booked" && "bg-status-booked text-background border border-blue-600/50",
+                            data.status == "cancelled" && "bg-status-cancelled text-background border border-red-600/50",
+                            data.status == "completed" && "bg-status-completed text-background border border-green-600/50",
                         )}>
                             {data.status}
                         </Label>

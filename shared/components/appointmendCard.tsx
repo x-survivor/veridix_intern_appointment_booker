@@ -4,11 +4,23 @@ import { cn } from "@/shared/lib/utils"
 import { Label } from "./ui/label"
 import { appointment } from "../constants/types/appointmentType"
 import { updateStatus } from "@/features/(public)/appointments/services/updateStatus"
+import { alphabetColors } from "@/shared/constants/alphabetColor";
 
 const AppointmentCard = ({ data, refetch }: { data: appointment, refetch: () => Promise<void> }) => {
+    const patient_initials = data.patient_name[0]?.toUpperCase() as keyof typeof alphabetColors
     return (
         <>
             <tr className="max-w-full flex items-center">
+                <td className={`w-1/4 text-background`}>
+                    <span style={{
+                        backgroundColor: alphabetColors[patient_initials]
+                    }}
+                    className="w-8 aspect-square flex justify-center items-center rounded-full font-bold"
+                    >
+
+                        {patient_initials}
+                    </span>
+                </td>
                 <td className="w-full flex justify-start items-start text-lg font-semibold">
                     {data.patient_name}
                 </td>
@@ -52,7 +64,7 @@ const AppointmentCard = ({ data, refetch }: { data: appointment, refetch: () => 
                         {data.status}
                     </Label>
                 </td>
-                
+
             </tr>
         </>
     )

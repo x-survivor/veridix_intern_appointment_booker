@@ -11,26 +11,28 @@ const DatePicker = ({ filter, setFilter }: { filter: string, setFilter: Dispatch
     const [trigger, setTrigger] = useState(false);
     return (
         <Popover open={trigger} onOpenChange={setTrigger}>
-            <span onClick={() => setFilter(prev => ({ ...prev, filterByDate: "" }))}
-                className={cn("hidden justify-center items-center hover:text-destructive hover:cursor-pointer text-foreground",
-                    filter && "flex"
-                )}>
-                <X />
-            </span>
-            <PopoverTrigger render={
-                <Button
-                    variant={"outline"}
-                    data-empty={!filter}
-                    className="justify-center text-left font-normal data-[empty=true]:text-muted-foreground border border-black/30 rounded-md"
+            <div className="flex justify-evenly items-center border border-black/30 rounded-md">
+                <span onClick={() => setFilter(prev => ({ ...prev, filterByDate: "" }))}
+                    className={cn("w-10 hidden justify-center items-center hover:text-destructive hover:cursor-pointer text-foreground",
+                        filter && "flex"
+                    )}>
+                    <X className="w-4" />
+                </span>
+                <PopoverTrigger render={
+                    <Button
+                        variant={"outline"}
+                        data-empty={!filter}
+                        className="justify-center text-left font-normal data-[empty=true]:text-muted-foreground border-0"
 
-                >
-                    <CalendarDays/>
-                    {filter ? (filter) : <span>Filter By Date</span>}
-                    <ChevronDownIcon data-icon="inline-end" />
-                </Button>
-            }
-            />
-            <PopoverContent className="w-auto p-0" align="start">
+                    >
+                        <CalendarDays />
+                        {filter ? (filter) : <span>Filter By Date</span>}
+                        <ChevronDownIcon data-icon="inline-end" />
+                    </Button>
+                }
+                />
+            </div>
+            <PopoverContent className="w-auto" align="start">
                 <Calendar
                     mode="single"
                     selected={filter ? new Date(filter) : undefined}
@@ -43,6 +45,9 @@ const DatePicker = ({ filter, setFilter }: { filter: string, setFilter: Dispatch
                                 ))
                             setTrigger(false);
                         }}
+                    disabled={{
+                        dayOfWeek: 0
+                    }}
                 />
             </PopoverContent>
         </Popover>

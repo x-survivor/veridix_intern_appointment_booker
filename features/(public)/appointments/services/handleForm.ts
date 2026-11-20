@@ -28,6 +28,7 @@ const SubmitForm = async (data: appointmentFormType) => {
       console.log("Server response:", error.response?.data);
 
       toast.error(error.response?.data?.message || "Something went wrong");
+      throw error;
     } else {
       console.error(error);
       toast.error("Unexpected error occurred");

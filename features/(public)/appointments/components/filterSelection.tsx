@@ -8,7 +8,7 @@ const FilterSelection = ({ filter, setFilter, data, title }: { filter: string, s
     const titleFilter = "filterBy" + title.match(/\w+/)?.[0];
     return (
         <Select value={filter} onValueChange={(value) => setFilter(prev => ({ ...prev, [titleFilter]: value }))}>
-            <div className="border border-black/30 px-2 rounded-md w-1/3 flex justify-center items-center gap-2">
+            <div className="border border-black/30 px-2 w-47 lg:w-1/3 rounded-md flex justify-center items-center gap-2">
 
                 <span onClick={() => setFilter(prev => ({ ...prev, [titleFilter]: "" }))}
                     className={cn("hidden justify-center items-center hover:text-destructive hover:cursor-pointer text-foreground",

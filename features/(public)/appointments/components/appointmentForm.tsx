@@ -25,14 +25,18 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
     const initialValues = useAppSelector((state) => state.form);
     const methods = useForm<appointmentFormType>({ defaultValues: initialValues });
     const submitting = methods.formState.isSubmitting;
-    const submitted = methods.formState.isSubmitSuccessful;
 
-    useEffect(() => {
-        if (submitted) {
+    const onSubmit = async (data: appointmentFormType) => {
+        try {
+            await SubmitForm(data);
+            data = initialValues;
             setDialogTrigger(false);
-            refetch();
-        };
-    }, [submitted, setDialogTrigger, refetch]);
+            await refetch();
+
+        } catch (error) {
+            console.error("Appointment submission failed:", error);
+        }
+    };
 
     return (
         <FormProvider {...methods}>
@@ -41,7 +45,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
                     <DialogHeader>
                         <DialogTitle>Appointment Form</DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={methods.handleSubmit(SubmitForm)} className="flex flex-col gap-5">
+                    <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-5">
                         <PatientName />
                         <PatientPhone />
                         <Duration />

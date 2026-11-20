@@ -13,6 +13,7 @@ export default function useData(filter?: filter) {
 
   const refetch = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await getAllData();
       if (data.rows <= 0) {
@@ -38,14 +39,13 @@ export default function useData(filter?: filter) {
     if (filter == InitalFilter || filter == undefined) {
       return fetchedData;
     }
-    const filteredArray = fetchedData.filter(
+    return fetchedData.filter(
       (item) =>
         (!filter.filterByDoctor ||
           item.doctor_name === filter.filterByDoctor) &&
         (!filter.filterByStatus || item.status === filter.filterByStatus) &&
         (!filter.filterByDate || item.date === filter.filterByDate),
     );
-    return filteredArray;
   }, [filter, fetchedData]);
 
   return { filteredData, loading, error, refetch };

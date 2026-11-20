@@ -1211,10 +1211,10 @@ export function TimePickerColumns({
       {children === undefined ? (
         <>
           {context.periodPosition === "start" && period}
+          {context.periodPosition === "end" && period}
           <TimePickerColumn type="hour" />
           {granularity !== "hour" && <TimePickerColumn type="minute" />}
           {granularity === "second" && <TimePickerColumn type="second" />}
-          {context.periodPosition === "end" && period}
         </>
       ) : (
         children
@@ -1250,7 +1250,7 @@ const LIST_CLASS =
    leaves room for it. The filled pill for the value is this primitive's own:
    a select marks its choice with a check. */
 const OPTION_CLASS =
-  "flex h-(--time-picker-option-height) shrink-0 cursor-default items-center justify-center tabular-nums transition-[color,background-color,box-shadow] duration-100 select-none not-aria-selected:hover:bg-accent not-aria-selected:hover:text-accent-foreground aria-selected:bg-primary aria-selected:font-medium aria-selected:text-primary-foreground aria-disabled:pointer-events-none aria-disabled:opacity-50 forced-colors:aria-selected:bg-[Highlight] forced-colors:aria-selected:text-[HighlightText] forced-colors:group-focus-visible/time-picker-list:data-highlighted:outline-solid forced-colors:group-focus-visible/time-picker-list:data-highlighted:outline-2 group-focus-visible/time-picker-list:data-highlighted:ring-2 ring-ring/30 rounded-none text-sm"
+  "flex h-(--time-picker-option-height) shrink-0 cursor-default items-center justify-center tabular-nums transition-[color,background-color,box-shadow] duration-100 select-none not-aria-selected:hover:bg-muted not-aria-selected:hover:text-muted-foreground aria-selected:bg-muted aria-selected:font-medium aria-selected:text-muted-foreground aria-disabled:pointer-events-none aria-disabled:opacity-50 forced-colors:aria-selected:bg-[Highlight] forced-colors:aria-selected:text-[HighlightText] forced-colors:group-focus-visible/time-picker-list:data-highlighted:outline-solid forced-colors:group-focus-visible/time-picker-list:data-highlighted:outline-2 group-focus-visible/time-picker-list:data-highlighted:ring-2 ring-ring/30 rounded-none text-sm"
 
 /* Marks which ends of a list have rows scrolled out of view, for the fade.
    Written to the DOM directly: it changes every scroll frame and nothing
@@ -1671,7 +1671,6 @@ export function TimePickerFooter({
     >
       {children === undefined ? (
         <>
-          <TimePickerNow />
           <TimePickerClear />
           {(popup || context.requireConfirm) && <TimePickerConfirm />}
         </>
@@ -1728,7 +1727,7 @@ export function TimePickerClear({
       size={size}
       disabled={context.disabled || context.readOnly}
       data-slot="time-picker-clear"
-      className={cn("text-muted-foreground", className)}
+      className={cn("text-muted-foreground cursor-pointer", className)}
       onClick={(event) => {
         onClick?.(event)
         if (event.defaultPrevented) return
@@ -1757,7 +1756,8 @@ export function TimePickerConfirm({
   return (
     <Button
       type="button"
-      variant={variant ?? (context.requireConfirm ? "default" : "secondary")}
+      variant={variant ?? (context.requireConfirm ? "default" : "ghost")}
+      className={'bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground cursor-pointer'}
       size={size}
       disabled={context.disabled}
       data-slot="time-picker-confirm"

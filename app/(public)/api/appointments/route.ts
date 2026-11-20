@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse as res } from "next/server";
 import db from "@/shared/lib/database/db";
 import { appointmentSchema } from "@/shared/schemas/appointmentSchema";
+import { convertTime } from "@/shared/utils/convertTimeIntoMs";
 
 export async function GET() {
   try {
@@ -13,13 +14,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const validation = appointmentSchema.safeParse(body);
+  const id = crypto.randomUUID();
+  const status = "booked";
+  const created_at = new Date().toISOString();
   try {
-    const body = await req.json();
-    const validation = appointmentSchema.safeParse(body);
-    const id = crypto.randomUUID();
-    const status = "booked";
-    const created_at = new Date().toISOString();
-
     if (!validation.success) {
       return res.json(
         {
@@ -40,6 +40,8 @@ export async function POST(req: NextRequest) {
       duration,
       reason,
     } = validation.data;
+    const { startTime, endTime } = convertTime(date, start_time, duration);
+
     await db.execute(
       "INSERT INTO appointments (id, patient_name, patient_phone, doctor_name, start_time, reason, status, created_at, duration, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
@@ -65,6 +67,19 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "ER_DUP_ENTRY"
+    ) {
+      return res.json(
+        {
+          message: `${body.doctor_name} has appointment at ${body.start_time} on ${body.date}.`,
+        },
+        { status: 409 },
+      );
+    }
     return res.json({ message: "Database error", error }, { status: 500 });
   }
 }

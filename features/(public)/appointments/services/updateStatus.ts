@@ -1,7 +1,11 @@
 import axios from "axios";
 import { toast } from "sonner";
 
-const updateStatus = async (id: string, status: "cancelled" | "completed", refetch:()=>Promise<void>) => {
+const updateStatus = async (
+  id: string,
+  status: "cancelled" | "completed",
+  refetch: () => Promise<void>,
+) => {
   if (!status) {
     return;
   }
@@ -9,7 +13,11 @@ const updateStatus = async (id: string, status: "cancelled" | "completed", refet
     const response = await axios.patch(`api/appointments/${id}`, {
       status: status,
     });
-    console.log(response.data);
+    const data = response.data;
+    if (response.status == 404 || response.status == 500) {
+      toast.error(data.message);
+      return;
+    }
     toast.success(`Status Update to ${status}`);
     refetch();
   } catch (error) {
@@ -25,4 +33,4 @@ const updateStatus = async (id: string, status: "cancelled" | "completed", refet
   }
 };
 
-export { updateStatus }
+export { updateStatus };

@@ -1,10 +1,8 @@
 const Logo = ({ className }: { className?: string | "" }) => {
     const darkMode = className?.match(/dark:\w+-\w+/);
-    const property = className?.match(/dark:\w+-\w+/)?.map((data)=>(
-        data?.replace(/dark:/, "")
-    ));
-    console.log(darkMode);
-    console.log(property)
+    // const property = className?.match(/dark:\w+-\w+/)?.map((data)=>(
+    //     data?.replace(/dark:/, "")
+    // ));
     const logoPrimary = darkMode?.[0] == "dark" ? "#f1f5f9" : "#172554";
     const logoblue = "#1D4ED8";
     const logoorange = "#F97316";
