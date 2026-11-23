@@ -1,11 +1,30 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { RowDataPacket } from "mysql2";
 import { Header } from "@/shared/components/header";
 import Logo from "@/shared/components/logoSVG";
 import { Input } from "@/shared/components/ui/input";
 import { Search } from "lucide-react";
 import { ResponsiveHeader } from "@/shared/components/responsive/resposiveHeader";
 import { AuthControls } from "@/features/(public)/auth/authControls";
+import db from "@/shared/lib/database/db";
+import { SESSION_COOKIE, readSessionToken } from "@/shared/lib/auth/session";
 
-export default function AppointmentLayout({ children }: { children: React.ReactNode }) {
+type SessionRow = RowDataPacket & { id: number | string };
+
+export default async function AppointmentLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const session = readSessionToken(cookieStore.get(SESSION_COOKIE)?.value);
+
+  if (!session) redirect("/login");
+
+  const [rows] = await db.execute<SessionRow[]>(
+    "SELECT id FROM users WHERE id = ? AND token_version = ? LIMIT 1",
+    [session.id, session.tokenVersion],
+  );
+
+  if (rows.length === 0) redirect("/login");
+
   return (
     <>
       <Header />
