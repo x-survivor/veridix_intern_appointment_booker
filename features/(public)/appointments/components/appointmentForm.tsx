@@ -42,7 +42,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
     return (
         <FormProvider {...methods}>
             <Dialog open={dialogTrigger} onOpenChange={() => setDialogTrigger(false)}>
-                <DialogContent className="rounded-2xl bg-background text-foreground transition-all duration-300 ease-in-out">
+                <DialogContent className="rounded-2xl bg-background text-foreground transition-all duration-150 ease-in-out">
                     <DialogHeader>
                         <DialogTitle>Appointment Form</DialogTitle>
                     </DialogHeader>

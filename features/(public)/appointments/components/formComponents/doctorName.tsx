@@ -29,7 +29,7 @@ const DoctorName = () => {
                     >
                         <SelectTrigger
                             onBlur={field.onBlur}
-                            className={cn("w-full border border-black/30 p-2 rounded-xl",
+                            className={cn("w-full border border-black/30 p-2 rounded-md",
                                 fieldState.error ? "border-red-600" : "border-black/30"
                             )}>
                             <SelectValue placeholder="Doctor Name" />

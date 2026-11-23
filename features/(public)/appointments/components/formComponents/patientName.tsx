@@ -14,7 +14,7 @@ const PatientName = () => {
             <Label>Patient Name</Label>
             <Input
                 type="text"
-                className={cn("rounded-xl px-2 border border-black/30 placeholder:text-black/20",
+                className={cn("rounded-md px-2 border border-black/30 placeholder:text-black/20",
                     error && "border-red-600"
                 )}
                 placeholder="Bilal"

@@ -118,7 +118,8 @@ const DesktopView = (
                             )
                     }
                 </tbody>
-                <tfoot>
+                {
+                    pages > 1 && <tfoot>
                     <tr>
                         <td className="w-full flex justify-center items-center gap-2 p-4 flex-wrap">
                             <Button onClick={() => refetch(currentPage - 1)} variant={'ghost'} className={"aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer"}><ChevronLeft /></Button>
@@ -175,6 +176,7 @@ const DesktopView = (
                         </td>
                     </tr>
                 </tfoot>
+                }
             </table>
         </div >
     )
