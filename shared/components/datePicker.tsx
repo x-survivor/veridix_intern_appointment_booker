@@ -20,6 +20,7 @@ const DatePicker = ({ filter, setFilter }: { filter: string, setFilter: Dispatch
                 </span>
                 <PopoverTrigger render={
                     <Button
+                        type="button"
                         variant={"outline"}
                         data-empty={!filter}
                         className="justify-center text-left font-normal data-[empty=true]:text-muted-foreground border-0"

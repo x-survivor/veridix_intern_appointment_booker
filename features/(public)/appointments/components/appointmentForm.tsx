@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form"
 
 import {
@@ -25,6 +24,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
     const initialValues = useAppSelector((state) => state.form);
     const methods = useForm<appointmentFormType>({ defaultValues: initialValues });
     const submitting = methods.formState.isSubmitting;
+    const { reset } = methods;
 
     const onSubmit = async (data: appointmentFormType) => {
         try {
@@ -32,6 +32,7 @@ const ApplicationForm = ({ dialogTrigger, setDialogTrigger, refetch }: { dialogT
             data = initialValues;
             setDialogTrigger(false);
             await refetch();
+            reset();
 
         } catch (error) {
             console.error("Appointment submission failed:", error);

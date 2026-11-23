@@ -26,7 +26,7 @@ const DesktopView = (
         { filter: filter, filteredData: appointment[], loading: boolean, error: unknown | null, setDialogTrigger: Dispatch<SetStateAction<boolean>>, setFilter: Dispatch<SetStateAction<filter>>, refetch: () => Promise<void> }
 ) => {
     return (
-        <div className="hidden lg:flex flex-col gap-2 px-4 rounded-md h-[calc(50vh+50px)] overflow-auto bg-sidebar scrollbar-thin scrollbar-track-sidebar scrollbar-thumb-foreground">
+        <div className="hidden lg:flex flex-col gap-2 px-4 rounded-md shadow-sm bg-sidebar">
             <table className="w-full">
                 <thead className="sticky top-0 bg-sidebar">
                     <tr>
@@ -54,7 +54,7 @@ const DesktopView = (
                             </section>
                         </td>
                     </tr>
-                    <tr className="flex gap-6 justify-evenly font-bold border-b border-b-gray-800 mt-2 pb-2">
+                    <tr className="flex gap-6 justify-evenly font-bold pb-2 bg-background">
                         <td>
                             <span
                                 className="w-4 aspect-square flex justify-center items-center rounded-full font-bold"
@@ -82,34 +82,32 @@ const DesktopView = (
                     </tr>
                 </thead>
 
+                <tbody className="w-full h-[calc(45vh)] flex flex-col overflow-auto scrollbar-thin scrollbar-track-sidebar scrollbar-thumb-foreground">
                 {/* Loading and Error States */}
                 {loading ? (
-                    <tbody className="w-full h-80 flex justify-center items-center">
                         <tr className="w-full h-full flex justify-center items-center">
                             <td>
                                 <Spinner className="w-15 h-15" />
                             </td>
                         </tr>
-                    </tbody>
                 )
                     : error ? (
-                        <tbody className="w-full h-30 flex justify-center items-center">
                             <tr className="w-full h-30 flex justify-center items-center">
                                 <td>
                                     {error instanceof Error ? error.message : "Something Went Wrong"}
                                 </td>
                             </tr>
-                        </tbody>
                     ) :
                         (
                             filteredData.length > 0 && filteredData?.map((data) => (
-                                <tbody key={data.id} className="bg-background rounded-md">
+                                <tr key={data.id} className="border-b border-b-gray-800/20 flex">
                                     <AppointmentCard data={data} refetch={refetch} />
-                                </tbody>
+                                </tr>
                             )
                             )
                         )
                 }
+                </tbody>
             </table>
         </div >
     )

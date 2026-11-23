@@ -28,20 +28,17 @@ const DatePicker = ({ trigger, setTrigger }: { trigger: boolean, setTrigger: (ar
                 <>
                     <Popover open={trigger} onOpenChange={setTrigger}>
                         <PopoverTrigger render={
-                            <div className="w-full flex justify-center items-center border border-black/30 rounded-xl">
-                                <Calendar1/>
-                                <Button
-                                    variant={"outline"}
-                                    data-empty={!field.value}
-                                    className={cn("font-normal data-[empty=true]:text-muted-foreground",
-                                        fieldState.error && "border-red-600"
-                                    )}
-                                >
-
-                                    {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
-                                    <ChevronDownIcon data-icon="inline-end" />
-                                </Button>
-                            </div>
+                            <Button
+                                type="button"
+                                variant={"outline"}
+                                data-empty={!field.value}
+                                className={cn("font-normal data-[empty=true]:text-muted-foreground flex justify-evenly items-center rounded-md w-full",
+                                    fieldState.error && "border-red-600"
+                                )}
+                            >
+                                {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
+                                <ChevronDownIcon data-icon="inline-end" />
+                            </Button>
                         }
                         />
                         <PopoverContent className="w-auto p-0" align="start">
@@ -50,10 +47,11 @@ const DatePicker = ({ trigger, setTrigger }: { trigger: boolean, setTrigger: (ar
                                 selected={field.value ? new Date(field.value) : undefined}
                                 onSelect={field.onChange}
                                 defaultMonth={field.value ? new Date(field.value) : undefined}
-                                disabled={{
-                                    before: new Date(new Date().setHours(0, 0, 0, 0)),
-                                    dayOfWeek: 0,
-                                }}
+                                disabled={[
+                                    { before: new Date(new Date().setHours(0, 0, 0, 0)) },
+                                    { dayOfWeek: [0] }
+                                ]}
+                                captionLayout="dropdown"
                             />
                         </PopoverContent>
                     </Popover>
