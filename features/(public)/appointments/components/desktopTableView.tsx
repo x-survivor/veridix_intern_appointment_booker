@@ -22,8 +22,8 @@ import { filter } from "@/shared/constants/types/filterType";
 import { appointment } from "@/shared/constants/types/appointmentType";
 
 const DesktopView = (
-    { filter, setFilter, setDialogTrigger, filteredData, loading, error, refetch }:
-        { filter: filter, filteredData: appointment[], loading: boolean, error: unknown | null, setDialogTrigger: Dispatch<SetStateAction<boolean>>, setFilter: Dispatch<SetStateAction<filter>>, refetch: () => Promise<void> }
+    { filter, setFilter, setDialogTrigger, filteredData, loading, error, refetch, pages }:
+        { filter: filter, filteredData: appointment[], loading: boolean, error: unknown | null, setDialogTrigger: Dispatch<SetStateAction<boolean>>, setFilter: Dispatch<SetStateAction<filter>>, refetch: (page?: number) => Promise<void>, pages: number }
 ) => {
     return (
         <div className="hidden lg:flex flex-col gap-2 px-4 rounded-md shadow-sm bg-sidebar">
@@ -34,14 +34,14 @@ const DesktopView = (
                             <section className="flex items-center gap-3 font-bold lg:text-xl text-nowrap">
                                 <h1>Appointments Table</h1>
                                 <Button
-                                    onClick={refetch}
+                                    onClick={() => refetch()}
                                     variant={"ghost"}
                                     className={"hover:bg-sidebar hover:cursor-pointer shadow-sm p-1 aspect-square rounded-full hover:shadow-md"}>
                                     <RefreshCw />
                                 </Button>
                             </section>
                             <section className="flex w-1/2 justify-end gap-2">
-                                <Button onClick={() => setFilter(InitalFilter)} variant="destructive" className={cn("flex rounded-md", filter === InitalFilter && "hidden")}>Reset All</Button>
+                                <Button onClick={() => setFilter(InitalFilter)} variant="destructive" className={cn("hidden rounded-md", filter !== InitalFilter && "flex")}>Reset All</Button>
                                 <FilterSelection filter={filter?.filterByDoctor} setFilter={setFilter} data={doctors} title="Doctor Name" />
                                 <FilterSelection filter={filter?.filterByStatus} setFilter={setFilter} data={status} title="Status" />
                                 <DatePicker filter={filter?.filterByDate} setFilter={setFilter} />
@@ -83,31 +83,40 @@ const DesktopView = (
                 </thead>
 
                 <tbody className="w-full h-[calc(45vh)] flex flex-col overflow-auto scrollbar-thin scrollbar-track-sidebar scrollbar-thumb-foreground">
-                {/* Loading and Error States */}
-                {loading ? (
+                    {/* Loading and Error States */}
+                    {loading ? (
                         <tr className="w-full h-full flex justify-center items-center">
                             <td>
                                 <Spinner className="w-15 h-15" />
                             </td>
                         </tr>
-                )
-                    : error ? (
+                    )
+                        : error ? (
                             <tr className="w-full h-30 flex justify-center items-center">
                                 <td>
                                     {error instanceof Error ? error.message : "Something Went Wrong"}
                                 </td>
                             </tr>
-                    ) :
-                        (
-                            filteredData.length > 0 && filteredData?.map((data) => (
-                                <tr key={data.id} className="border-b border-b-gray-800/20 flex">
-                                    <AppointmentCard data={data} refetch={refetch} />
-                                </tr>
+                        ) :
+                            (
+                                filteredData.length > 0 && filteredData?.map((data) => (
+                                    <tr key={data.id} className="border-b border-b-gray-800/20 flex">
+                                        <AppointmentCard data={data} refetch={refetch} />
+                                    </tr>
+                                )
+                                )
                             )
-                            )
-                        )
-                }
+                    }
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td className="w-full flex justify-center items-center gap-2 p-4">
+                            {Array.from({ length: pages }, (_, index) => (
+                                <Button onClick={() => refetch(index + 1)} variant="ghost" className="aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer" key={index + 1}>{index + 1}</Button>
+                            ))}
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div >
     )

@@ -10,16 +10,31 @@ export default function useData(filter?: filter) {
   const [fetchedData, setFetchedData] = useState<appointment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown | null>(null);
+  const [pages, setPages] = useState<number>(0);
+  const [statistics, setStatistics] = useState<{
+    total: number;
+    booked: number;
+    cancelled: number;
+    completed: number;
+  }>({
+    total: 0,
+    booked: 0,
+    cancelled: 0,
+    completed: 0,
+  });
 
-  const refetch = useCallback(async () => {
+  const refetch = useCallback(async (pageNumber?: number) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllData();
-      if (data.rows <= 0) {
+      const data = await getAllData(pageNumber);
+      const { rows, pagination, total, booked, cancelled, completed } = data;
+      if (rows <= 0) {
         setError("No Data Found");
       }
-      setFetchedData(data.rows);
+      setPages(pagination.totalPages);
+      setFetchedData(rows);
+      setStatistics({ total, booked, cancelled, completed });
     } catch (error) {
       console.error("Failed to fetch appointments", error);
       setError(error);
@@ -48,5 +63,5 @@ export default function useData(filter?: filter) {
     );
   }, [filter, fetchedData]);
 
-  return { filteredData, loading, error, refetch };
+  return { filteredData, loading, error, refetch, pages, statistics };
 }

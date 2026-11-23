@@ -6,7 +6,7 @@ export type appointment = {
     date: string,
     start_time: string,
     duration: number,
-    reason: string | null,
+    reason: string | undefined,
     status: "booked" | "completed" | "cancelled",
     created_at: string,
 }

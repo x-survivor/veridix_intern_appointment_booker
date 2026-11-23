@@ -17,22 +17,14 @@ const AppointmentPage = () => {
     const [dialogTrigger, setDialogTrigger] = useState(false);
     const [filterDialog, setFilterDialog] = useState(false);
     const [filter, setFilter] = useState<filter>(InitalFilter);
-    const { filteredData, loading, error, refetch } = useData(filter);
-
-    const cancelledAppointments = filteredData.filter((data) => (
-        data.status == "cancelled"
-    )).length
-    const completedAppointments = filteredData.filter((data) => (
-        data.status == "completed"
-    )).length
-
+    const { filteredData, loading, error, refetch, pages, statistics } = useData(filter);
     return (
         <section className="w-full px-10 flex flex-col gap-2 mb-25 lg:mb-0">
             <Toaster />
             <div className="flex flex-col lg:flex-row gap-2">
-                <StatisticsCard title="Total" count={filteredData.length} />
-                <StatisticsCard title="Cancelled" count={cancelledAppointments} />
-                <StatisticsCard title="Completed" count={completedAppointments} />
+                <StatisticsCard title="Total" count={statistics.total} />
+                <StatisticsCard title="Cancelled" count={statistics.cancelled} />
+                <StatisticsCard title="Completed" count={statistics.completed} />
             </div>
             <ApplicationForm
                 dialogTrigger={dialogTrigger}
@@ -49,6 +41,7 @@ const AppointmentPage = () => {
                 loading={loading}
                 error={error}
                 refetch={refetch}
+                pages={pages}
             />
 
             {/* Responsive Card View for Appointment Data */}

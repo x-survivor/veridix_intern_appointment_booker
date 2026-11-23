@@ -1,17 +1,51 @@
 import { NextRequest, NextResponse as res } from "next/server";
 import db from "@/shared/lib/database/db";
 import { appointmentSchema } from "@/shared/schemas/appointmentSchema";
-import { convertTime } from "@/shared/utils/convertTimeIntoMs";
-import isOverlapping from "@/shared/services/isOverlapping";
-import { ResultSetHeader } from "mysql2";
+import { Insert } from "@/shared/services/insertData";
+import { RowDataPacket } from "mysql2";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const [rows] = await db.execute("SELECT * FROM appointments");
-    return res.json({ success: true, rows });
+    const rawPage = Number(req.nextUrl.searchParams.get("page"));
+    const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    const [rows] = await db.execute(
+      "SELECT * FROM appointments ORDER BY created_at LIMIT ? OFFSET ?",
+      [limit, offset],
+    );
+    const [count] = await db.execute<RowDataPacket[]>(`
+       SELECT
+       COUNT(*) AS total,
+        SUM(status = 'booked') AS booked,
+        SUM(status = 'cancelled') AS cancelled,
+        SUM(status = 'completed') AS completed
+        FROM appointments
+`);
+
+    const { total, booked, cancelled, completed } = count[0];
+    const totalPages = Math.ceil(total / limit);
+    return res.json({
+      success: true,
+      rows,
+      booked,
+      cancelled,
+      completed,
+      total,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    });
   } catch (error) {
     console.error("Database connection failed:", error);
-    return res.json({ success: false }, { status: 500 });
+    return res.json(
+      { success: false, message: "Failed to Fetch Data" },
+      { status: 500 },
+    );
   }
 }
 
@@ -21,6 +55,8 @@ export async function POST(req: NextRequest) {
   const id = crypto.randomUUID();
   const status = "booked";
   const created_at = new Date().toISOString();
+  const connection = await db.getConnection();
+
   try {
     if (!validation.success) {
       return res.json(
@@ -33,76 +69,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const {
-      patient_name,
-      patient_phone,
-      doctor_name,
-      date,
-      start_time,
-      duration,
-      reason,
-    } = validation.data;
-    const { startTime, endTime } = convertTime(date, start_time, duration);
-    const OverlapCheck = await isOverlapping(
-      startTime,
-      endTime,
-      doctor_name,
-      date,
-    );
-
-    if (OverlapCheck?.status) {
-      return res.json(OverlapCheck, { status: 409 });
-    }
-
-    const [result] = await db.execute<ResultSetHeader>(
-      "INSERT INTO appointments (id, patient_name, patient_phone, doctor_name, start_time, reason, status, created_at, duration, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [
+    const result = await Insert(
+      {
         id,
-        patient_name,
-        patient_phone,
-        doctor_name,
-        start_time,
-        reason,
+        patient_name: validation.data.patient_name,
+        patient_phone: validation.data.patient_phone,
+        doctor_name: validation.data.doctor_name,
+        date: validation.data.date,
+        start_time: validation.data.start_time,
+        duration: validation.data.duration,
+        reason: validation.data.reason,
         status,
         created_at,
-        duration,
-        date,
-      ].map((value) => value ?? null),
+      },
+      connection,
     );
-    if (result.affectedRows === 0) {
-      return res.json(
-        {
-          success: false,
-          message: "Failed to create Appointment",
-        },
-        {
-          status: 500,
-        },
-      );
-    }
 
     return res.json(
       {
-        success: true,
-        message: "Appointment created successfully",
-        id: id,
+        success: result?.success,
+        message: result?.message,
       },
-      { status: 201 },
+      { status: result?.status },
     );
   } catch (error) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      error.code === "ER_DUP_ENTRY"
-    ) {
-      return res.json(
-        {
-          message: `${body.doctor_name} has appointment at ${body.start_time} on ${body.date}.`,
-        },
-        { status: 409 },
-      );
-    }
     return res.json({ message: "Database error", error }, { status: 500 });
+  } finally {
+    connection.release();
   }
 }

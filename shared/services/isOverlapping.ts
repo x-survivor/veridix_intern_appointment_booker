@@ -1,5 +1,5 @@
-import db from "@/shared/lib/database/db";
 import { RowDataPacket } from "mysql2";
+import type { PoolConnection } from "mysql2/promise";
 import { convertTime } from "../utils/convertTimeIntoMs";
 
 const isOverlapping = async (
@@ -7,35 +7,30 @@ const isOverlapping = async (
   endTime: number,
   doctor_name: string,
   date: string,
+  connection: PoolConnection,
 ) => {
-  try {
-    const [rows] = await db.execute<RowDataPacket[]>(
-      "SELECT start_time, duration FROM appointments WHERE doctor_name=? AND date=? AND status='booked'",
-      [doctor_name, date],
+  const [rows] = await connection.execute<RowDataPacket[]>(
+    "SELECT start_time, duration FROM appointments WHERE doctor_name=? AND date=? AND status='booked'",
+    [doctor_name, date],
+  );
+  const hasOverlap = rows.some((appointment) => {
+    const period = convertTime(
+      date,
+      appointment.start_time,
+      appointment.duration,
     );
-    const hasOverlap = rows.some((appointment) => {
-      const period = convertTime(
-        date,
-        appointment.start_time,
-        appointment.duration,
-      );
 
-      return startTime < period.endTime && endTime > period.startTime;
-    });
+    return startTime < period.endTime && endTime > period.startTime;
+  });
 
-    if (hasOverlap) {
-      return {
-        status: true,
-        message: "Doctor already has an appointment during this time.",
-      };
-    }
-
-    return null;
-  } catch (error) {
+  if (hasOverlap) {
     return {
-      message: error,
+      status: true,
+      message: "Doctor already has an appointment during this time.",
     };
   }
+
+  return null;
 };
 
 export default isOverlapping;
