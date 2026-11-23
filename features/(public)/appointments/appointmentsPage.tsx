@@ -55,7 +55,7 @@ const AppointmentPage = () => {
                         </section>
                     ) : error ? (
                         <section>
-                            {error instanceof Error ? error.message : "Something Went Wrong"}
+                            {error ? error.message : "Something Went Wrong"}
                         </section>
                     ) : (
                         filteredData.length > 0 && filteredData?.map((data) => (

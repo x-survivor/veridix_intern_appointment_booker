@@ -34,7 +34,6 @@ export default function useData(filter?: filter) {
         });
 
         const { rows, pagination, total, booked, cancelled, completed } = data;
-        console.log(data);
         setCurrentPage(pagination.page);
         setPages(pagination.totalPages);
         setFetchedData(rows);

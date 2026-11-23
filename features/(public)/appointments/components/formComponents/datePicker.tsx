@@ -10,7 +10,7 @@ import { Label } from "@/shared/components/ui/label";
 import { Button } from "@/shared/components/ui/button";
 import { Calendar } from "@/shared/components/ui/calendar";
 
-import { ChevronDownIcon, Calendar1 } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/shared/lib/utils"
 
 import { appointmentFormType } from "@/shared/constants/types/appointmentFormType";
