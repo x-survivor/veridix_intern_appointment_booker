@@ -10,7 +10,6 @@ const AppointmentCard = ({ data, refetch }: { data: appointment, refetch: () => 
     const patient_initials = data.patient_name[0]?.toUpperCase() as keyof typeof alphabetColors
     return (
         <>
-
             <td className={`w-1/4 text-background`}>
                 <span style={{
                     backgroundColor: alphabetColors[patient_initials]

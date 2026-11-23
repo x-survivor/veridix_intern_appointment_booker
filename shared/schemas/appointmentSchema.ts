@@ -17,7 +17,7 @@ export const appointmentSchema = z.object({
     .trim()
     .min(1, "Patient name is required")
     .max(100, "Patient name cannot exceed 100 characters")
-    .regex(/^[A-Za-z\s]+$/, "Patient Name can only include Alphabet and Space"),
+    .regex(/^[a-zA-Z\s']+$/, "Patient Name can only include Alphabet and Space"),
 
   patient_phone: z
     .string()

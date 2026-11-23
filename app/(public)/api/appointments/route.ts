@@ -1,27 +1,76 @@
 import { NextRequest, NextResponse as res } from "next/server";
 import db from "@/shared/lib/database/db";
 import { appointmentSchema } from "@/shared/schemas/appointmentSchema";
+import { filterSchema } from "@/shared/schemas/filterSchema";
 import { Insert } from "@/shared/services/insertData";
 import { RowDataPacket } from "mysql2";
 
 export async function GET(req: NextRequest) {
   try {
-    const rawPage = Number(req.nextUrl.searchParams.get("page"));
+    const searchParams = req.nextUrl.searchParams;
+
+    //pagination
+    const rawPage = Number(searchParams.get("page"));
     const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
     const limit = 10;
     const offset = (page - 1) * limit;
-    const [rows] = await db.execute(
-      "SELECT * FROM appointments ORDER BY created_at LIMIT ? OFFSET ?",
-      [limit, offset],
+
+    //filteration
+    const validation = filterSchema.safeParse({
+      doctor: searchParams.get("doctor") || undefined,
+      date: searchParams.get("date") || undefined,
+      status: searchParams.get("status") || undefined,
+    });
+
+    if (!validation.success) {
+      return res.json(
+        {
+          success: false,
+          message: "Invalid filters",
+          errors: validation.error.issues,
+        },
+        { status: 400 },
+      );
+    }
+
+    const { doctor, date, status } = validation.data;
+
+    const conditions: string[] = [];
+    const values: string[] = [];
+
+    if (doctor) {
+      conditions.push("doctor_name = ?");
+      values.push(doctor);
+    }
+    if (status) {
+      conditions.push("status = ?");
+      values.push(status);
+    }
+    if (date) {
+      conditions.push("date = ?");
+      values.push(date);
+    }
+
+    const whereClause = conditions.length
+      ? `WHERE ${conditions.join(" AND ")}`
+      : "";
+
+    const [rows] = await db.execute<RowDataPacket[]>(
+      `SELECT * FROM appointments ${whereClause} ORDER BY created_at LIMIT ? OFFSET ?`,
+      [...values, limit, offset],
     );
-    const [count] = await db.execute<RowDataPacket[]>(`
-       SELECT
-       COUNT(*) AS total,
-        SUM(status = 'booked') AS booked,
-        SUM(status = 'cancelled') AS cancelled,
-        SUM(status = 'completed') AS completed
-        FROM appointments
-`);
+
+    const [count] = await db.execute<RowDataPacket[]>(
+      `
+        SELECT
+    COUNT(*) AS total,
+    COALESCE(SUM(status = 'booked'), 0) AS booked,
+    COALESCE(SUM(status = 'cancelled'), 0) AS cancelled,
+    COALESCE(SUM(status = 'completed'), 0) AS completed
+        FROM appointments ${whereClause}
+`,
+      [...values],
+    );
 
     const { total, booked, cancelled, completed } = count[0];
     const totalPages = Math.ceil(total / limit);

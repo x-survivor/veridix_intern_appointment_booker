@@ -17,7 +17,7 @@ const AppointmentPage = () => {
     const [dialogTrigger, setDialogTrigger] = useState(false);
     const [filterDialog, setFilterDialog] = useState(false);
     const [filter, setFilter] = useState<filter>(InitalFilter);
-    const { filteredData, loading, error, refetch, pages, statistics } = useData(filter);
+    const { filteredData, loading, error, refetch, pages, statistics, currentPage } = useData(filter);
     return (
         <section className="w-full px-10 flex flex-col gap-2 mb-25 lg:mb-0">
             <Toaster />
@@ -42,6 +42,7 @@ const AppointmentPage = () => {
                 error={error}
                 refetch={refetch}
                 pages={pages}
+                currentPage={currentPage}
             />
 
             {/* Responsive Card View for Appointment Data */}

@@ -1,67 +1,77 @@
 "use client";
 
 import { appointment } from "@/shared/constants/types/appointmentType";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import getAllData from "../services/getAllData";
 import type { filter } from "@/shared/constants/types/filterType";
-import { InitalFilter } from "@/shared/constants/datasets/initialFilter";
 
 export default function useData(filter?: filter) {
   const [fetchedData, setFetchedData] = useState<appointment[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<unknown | null>(null);
+  const [error, setError] = useState<{message: string}>({message:""});
   const [pages, setPages] = useState<number>(0);
-  const [statistics, setStatistics] = useState<{
-    total: number;
-    booked: number;
-    cancelled: number;
-    completed: number;
-  }>({
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const { filterByDoctor, filterByStatus, filterByDate } = filter ?? {};
+
+  const [statistics, setStatistics] = useState({
     total: 0,
     booked: 0,
     cancelled: 0,
     completed: 0,
   });
 
-  const refetch = useCallback(async (pageNumber?: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getAllData(pageNumber);
-      const { rows, pagination, total, booked, cancelled, completed } = data;
-      if (rows <= 0) {
-        setError("No Data Found");
+  const refetch = useCallback(
+    async (pageNumber: number = 1) => {
+      setLoading(true);
+      setError({message:""});
+
+      try {
+        const data = await getAllData(pageNumber, {
+          filterByDoctor: filterByDoctor ?? "",
+          filterByStatus: filterByStatus ?? "",
+          filterByDate: filterByDate ?? "",
+        });
+
+        const { rows, pagination, total, booked, cancelled, completed } = data;
+        console.log(data);
+        setCurrentPage(pagination.page);
+        setPages(pagination.totalPages);
+        setFetchedData(rows);
+        setStatistics({ total, booked, cancelled, completed });
+
+        if (rows.length === 0) {
+          setError({ message: "No Data Found" });
+        }
+      } catch (error) {
+        console.error("Failed to fetch appointments", error);
+        setError({message:""});
+      } finally {
+        setLoading(false);
       }
-      setPages(pagination.totalPages);
-      setFetchedData(rows);
-      setStatistics({ total, booked, cancelled, completed });
-    } catch (error) {
-      console.error("Failed to fetch appointments", error);
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [filter],
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       refetch();
     };
     fetchData();
-  }, [refetch]);
+  }, [
+    refetch,
+    filter?.filterByDoctor,
+    filter?.filterByStatus,
+    filter?.filterByDate,
+  ]);
 
-  const filteredData = useMemo(() => {
-    if (filter == InitalFilter || filter == undefined) {
-      return fetchedData;
-    }
-    return fetchedData.filter(
-      (item) =>
-        (!filter.filterByDoctor ||
-          item.doctor_name === filter.filterByDoctor) &&
-        (!filter.filterByStatus || item.status === filter.filterByStatus) &&
-        (!filter.filterByDate || item.date === filter.filterByDate),
-    );
-  }, [filter, fetchedData]);
-
-  return { filteredData, loading, error, refetch, pages, statistics };
+  return {
+    filteredData: fetchedData,
+    loading,
+    error,
+    refetch,
+    pages,
+    statistics,
+    currentPage,
+  };
 }

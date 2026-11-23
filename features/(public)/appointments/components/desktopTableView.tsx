@@ -1,7 +1,7 @@
 
 import { cn } from "@/shared/lib/utils"
 import { Dispatch, SetStateAction } from "react";
-import { Plus, RefreshCw } from "lucide-react";
+import { Plus, RefreshCw, ChevronRight, ChevronLeft } from "lucide-react";
 
 // Shadcn
 import { Button } from "@/shared/components/ui/button";
@@ -22,9 +22,19 @@ import { filter } from "@/shared/constants/types/filterType";
 import { appointment } from "@/shared/constants/types/appointmentType";
 
 const DesktopView = (
-    { filter, setFilter, setDialogTrigger, filteredData, loading, error, refetch, pages }:
-        { filter: filter, filteredData: appointment[], loading: boolean, error: unknown | null, setDialogTrigger: Dispatch<SetStateAction<boolean>>, setFilter: Dispatch<SetStateAction<filter>>, refetch: (page?: number) => Promise<void>, pages: number }
+    { filter, setFilter, setDialogTrigger, filteredData, loading, error, refetch, pages, currentPage }:
+        { filter: filter, filteredData: appointment[], loading: boolean, error: {message: string}, setDialogTrigger: Dispatch<SetStateAction<boolean>>, setFilter: Dispatch<SetStateAction<filter>>, refetch: (page?: number) => Promise<void>, pages: number, currentPage: number }
 ) => {
+    const visiblePages = 5;
+    const startPage = Math.max(
+        1,
+        Math.min(currentPage - 2, pages - visiblePages + 1)
+    );
+    const endPage = Math.min(pages, startPage + visiblePages - 1);
+    const pageNumbers = Array.from(
+        { length: endPage - startPage + 1 },
+        (_, index) => startPage + index
+    );
     return (
         <div className="hidden lg:flex flex-col gap-2 px-4 rounded-md shadow-sm bg-sidebar">
             <table className="w-full">
@@ -91,10 +101,10 @@ const DesktopView = (
                             </td>
                         </tr>
                     )
-                        : error ? (
+                        : error.message ? (
                             <tr className="w-full h-30 flex justify-center items-center">
                                 <td>
-                                    {error instanceof Error ? error.message : "Something Went Wrong"}
+                                    {error.message ? error.message : "Something Went Wrong"}
                                 </td>
                             </tr>
                         ) :
@@ -110,10 +120,58 @@ const DesktopView = (
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td className="w-full flex justify-center items-center gap-2 p-4">
-                            {Array.from({ length: pages }, (_, index) => (
-                                <Button onClick={() => refetch(index + 1)} variant="ghost" className="aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer" key={index + 1}>{index + 1}</Button>
-                            ))}
+                        <td className="w-full flex justify-center items-center gap-2 p-4 flex-wrap">
+                            <Button onClick={() => refetch(currentPage - 1)} variant={'ghost'} className={"aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer"}><ChevronLeft /></Button>
+                            <div className="flex justify-center items-center gap-2">
+                                {startPage > 1 && (
+                                    <>
+                                        <Button
+                                            onClick={() => refetch(1)}
+                                            variant="ghost"
+                                            className={cn(
+                                                "aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer",
+                                                currentPage === 1 &&
+                                                "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                                            )}>
+                                            1
+                                        </Button>
+                                        {startPage > 2 && <span>...</span>}
+                                    </>
+                                )}
+
+                                {pageNumbers.map((page) => (
+                                    <Button
+                                        key={page}
+                                        onClick={() => refetch(page)}
+                                        variant="ghost"
+                                        className={cn(
+                                            "aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer",
+                                            currentPage === page &&
+                                            "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                                        )}
+                                    >
+                                        {page}
+                                    </Button>
+                                ))}
+
+                                {endPage < pages && (
+                                    <>
+                                        {endPage < pages - 1 && <span>...</span>}
+                                        <Button
+                                            onClick={() => refetch(pages)}
+                                            variant="ghost"
+                                            className={cn(
+                                                "aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer",
+                                                currentPage === pages &&
+                                                "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                                            )}
+                                        >
+                                            {pages}
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+                            <Button onClick={() => refetch(currentPage + 1)} variant={'ghost'} className={"aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer"}><ChevronRight /></Button>
                         </td>
                     </tr>
                 </tfoot>

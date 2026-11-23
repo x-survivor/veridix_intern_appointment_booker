@@ -20,7 +20,7 @@ const PatientName = () => {
                 placeholder="Bilal"
                 {...register("patient_name", {
                     pattern: {
-                        value: /^[(a-zA-Z)\s]+$/,
+                        value: /^[a-zA-Z\s']+$/,
                         message: "Name can only include Alphabet"
                     },
                     required: { value: true, message: "Patient name is required" }
