@@ -1,97 +1,123 @@
 "use client";
-import Image from "next/image";
-import { cn } from "@/shared/lib/utils";
-import { useForm, FormProvider } from "react-hook-form";
+
+import { useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
+import { AuthShell } from "@/features/(public)/auth/authShell";
+import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { Button } from "@/shared/components/ui/button";
-import Logo from "@/shared/components/logoSVG";
-import { Hospital, HeartCrack, Heart, ArrowRight } from "lucide-react";
-const LoginPage = () => {
-    const methods = useForm<{ email: string, password: string }>({
-        defaultValues: { email: "", password: "" },
-    });
-    const { register, reset, formState } = methods;
-    const error = formState.errors;
-    const loginFormSubmit = () => {
 
+export function LoginPage() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      email: String(formData.get("email") ?? "").trim(),
+      password: String(formData.get("password") ?? ""),
+    };
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        setError(result?.message ?? "Unable to sign in. Check your details and try again.");
+        return;
+      }
+
+      router.replace("/appointments");
+      router.refresh();
+    } catch {
+      setError("The server could not be reached. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    return (
-        <FormProvider {...methods}>
-            <main className="w-full h-screen flex justify-center items-center bg-background">
-                <section className="w-1/2 bg-background h-full hidden md:flex flex-col justify-center items-center gap-4">
-                    <div className="group relative w-full h-full flex flex-col justify-center items-center">
-                        <Image src={"/login_background.jpg"} alt="login_background" width={1080} height={1080} className="z-0 absolute" />
-                        <Image
-                            className="z-20 ml-30 rounded-b-full"
-                            width={1080} height={1080} src="/login_background_doctor.webp" alt="doctor" loading="lazy" />
-                        <div className="z-10 inset absolute w-3/4 aspect-square rounded-full border-10 border-background backdrop-blur-xs"></div>
-                    </div>
-                </section>
-                <section className="w-full md:w-1/2 h-full flex flex-col justify-center items-center gap-10">
-                    <div className="w-35 h-20">
-                        <Logo />
-                    </div>
-                    <p className="px-4 text-center md:w-1/2 flex justify-center items-center text-foreground text-2xl font-mono font-black">
-                        Caring for Your Health, When It Matters Most
-                    </p>
-                    <form className="w-full flex flex-col justify-center items-center gap-4" onSubmit={methods.handleSubmit(loginFormSubmit)}>
-                        <div className="w-full lg:w-2/3 flex flex-col gap-2 px-20">
-                            <Label>Email OR UseName</Label>
-                            <Input
-                                className={cn("border border-foreground p-2 rounded-md w-full",
-                                    error.email && "border-destructive"
-                                )}
-                                placeholder="Email"
-                                type="text"
-                                {...register("email", {
-                                    pattern: { value: /^(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|[a-zA-Z0-9_]+)$/, message: "Enter Valid Email or Username" },
-                                    required: { value: true, message: "Enter Email or Usename" }
-                                })}
-                            />
-                            {
-                                error.email && <Label className="text-destructive">{error.email.message}</Label>
-                            }
-                        </div>
-                        <div className="w-full lg:w-2/3 flex flex-col gap-2 px-20">
-                            <Label>Password</Label>
-                            <Input
-                                className={cn("border border-foreground p-2 rounded-md w-full",
-                                    error.password && "border-destructive"
-                                )}
-                                placeholder="Password"
-                                type="password"
-                                {...register("password", {
-                                    required: { value: true, message: "Enter Password" }
-                                })}
-                            />
-                            {
-                                error.password && <Label className="text-destructive">{error.password.message}</Label>
-                            }
-                            <Button variant={"ghost"} className={"w-full h-4 flex justify-end p-0 cursor-pointer hover:bg-transparent hover:text-foreground/90"}>Forgot Password</Button>
-                        </div>
-                        <div className="w-full lg:w-2/3 flex flex-col gap-2 px-20">
-                            <Button type="submit" className="rounded-md bg-accent hover:bg-accent/90 cursor-pointer">
-                                Login
-                            </Button>
-                        </div>
-                    </form>
-                    <div className="w-full group relative flex flex-col justify-center items-center">
-                        <div className="w-1/5 inset fixed h-px bg-black"></div>
-                        <Button className={"inset absolute bg-background text-foreground flex justify-center cursor-pointer hover:bg-background hover:text-accent/90"}>Register</Button>
+  }
 
-                    </div>
-                    <div className="flex justify-center items-center w-1/2 gap-2 text-foreground">
-                        <HeartCrack className="w-1/5 h-10" />
-                        <ArrowRight />
-                        <Hospital className="w-1/5 h-10" />
-                        <ArrowRight />
-                        <Heart className="w-1/5 h-10" />
-                    </div>
-                </section>
-            </main>
-        </FormProvider>
-    )
+  return (
+    <AuthShell>
+      <div className="mb-8">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
+          Welcome back
+        </p>
+        <h1 className="font-heading text-3xl font-semibold tracking-tight text-slate-900">
+          Sign in to your account
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-slate-500">
+          Enter your email and password to access your Clinio workspace.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-slate-700">Email address</Label>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@clinic.com"
+              required
+              maxLength={254}
+              className="h-12 rounded-xl border border-slate-200 bg-white pl-10 pr-4 shadow-none placeholder:text-slate-400 focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600/15"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-slate-700">Password</Label>
+          <div className="relative">
+            <LockKeyhole className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              required
+              maxLength={128}
+              className="h-12 rounded-xl border border-slate-200 bg-white pl-10 pr-4 shadow-none placeholder:text-slate-400 focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600/15"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+            {error}
+          </p>
+        )}
+
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="h-12 w-full rounded-xl bg-blue-700 text-sm font-semibold normal-case tracking-normal text-white shadow-sm hover:bg-blue-800"
+        >
+          {isSubmitting ? "Signing in..." : "Sign in"}
+          {!isSubmitting && <ArrowRight className="ml-2 size-4" />}
+        </Button>
+      </form>
+
+      <p className="mt-8 text-center text-sm text-slate-500">
+        Don&apos;t have an account?{" "}
+        <Link href="/register" className="font-semibold text-blue-700 hover:text-blue-800 hover:underline">
+          Create an account
+        </Link>
+      </p>
+    </AuthShell>
+  );
 }
-
-export { LoginPage }
