@@ -8,7 +8,7 @@ import type { filter } from "@/shared/constants/types/filterType";
 export default function useData(filter?: filter) {
   const [fetchedData, setFetchedData] = useState<appointment[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<{message: string}>({message:""});
+  const [error, setError] = useState<{ message: string }>({ message: "" });
   const [pages, setPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -24,7 +24,7 @@ export default function useData(filter?: filter) {
   const refetch = useCallback(
     async (pageNumber: number = 1) => {
       setLoading(true);
-      setError({message:""});
+      setError({ message: "" });
 
       try {
         const data = await getAllData(pageNumber, {
@@ -45,12 +45,12 @@ export default function useData(filter?: filter) {
         }
       } catch (error) {
         console.error("Failed to fetch appointments", error);
-        setError({message:""});
+        setError({ message: "" });
       } finally {
         setLoading(false);
       }
     },
-    [filter],
+    [filterByDoctor, filterByStatus, filterByDate],
   );
 
   useEffect(() => {
