@@ -99,14 +99,25 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const validation = appointmentSchema.safeParse(body);
   const id = crypto.randomUUID();
   const status = "booked";
   const created_at = new Date().toISOString();
   const connection = await db.getConnection();
 
   try {
+    const body = await req.json();
+    if (!body) {
+      return res.json(
+        {
+          success: false,
+          message: "Invalid Request or Parameters are missing",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+    const validation = appointmentSchema.safeParse(body);
     if (!validation.success) {
       return res.json(
         {
@@ -133,17 +144,41 @@ export async function POST(req: NextRequest) {
       },
       connection,
     );
+    if (!result) {
+      return res.json(
+        {
+          success: false,
+          message: "Failed to Create Appointment, try again",
+        },
+        { status: 500 },
+      );
+    }
 
     return res.json(
       {
-        success: result?.success,
-        message: result?.message,
+        success: result.success,
+        message: result.message,
       },
-      { status: result?.status },
+      { status: result.status },
     );
   } catch (error) {
-    return res.json({ message: "Database error", error }, { status: 500 });
+    if (error instanceof SyntaxError) {
+      return res.json(
+        { success: false, message: "Malformed JSON in request body" },
+        { status: 400 },
+      );
+    }
+    return res.json(
+      {
+        success: false,
+        message: "Database error",
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
   } finally {
-    connection.release();
+    if (connection) {
+      connection.release();
+    }
   }
 }
