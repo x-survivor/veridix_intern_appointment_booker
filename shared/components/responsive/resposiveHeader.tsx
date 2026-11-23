@@ -1,17 +1,15 @@
 "use client";
-import { Home, ClipboardList } from "lucide-react"
+import Link from "next/link";
+import { CalendarDays, Home } from "lucide-react";
 
-const ResponsiveHeader = () => {
-    return (
-        <section className="fixed bottom-0 h-20 w-full bg-sidebar flex md:hidden justify-center items-center">
-            <article className="text-foreground w-1/2 flex justify-center items-center">
-                <Home />
-            </article>
-            <article className="text-foreground w-1/2 flex justify-center items-center">
-                <ClipboardList />
-            </article>
-        </section>
-    )
-}
-
-export { ResponsiveHeader }
+const ResponsiveHeader = () => (
+  <nav aria-label="Mobile navigation" className="fixed bottom-0 z-30 flex h-16 w-full items-center justify-around border-t border-slate-200 bg-white/95 backdrop-blur md:hidden">
+    <Link href="/appointments" className="flex flex-col items-center gap-1 text-xs font-medium text-slate-600">
+      <Home className="size-5" />Home
+    </Link>
+    <Link href="/appointments" className="flex flex-col items-center gap-1 text-xs font-medium text-blue-700">
+      <CalendarDays className="size-5" />Appointments
+    </Link>
+  </nav>
+);
+export { ResponsiveHeader };

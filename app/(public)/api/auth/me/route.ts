@@ -1,25 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRequestUser } from "@/shared/lib/auth/session";
+import { requireAuthenticatedUser } from "@/shared/lib/auth/authGuard";
 
 export const runtime = "nodejs";
-
-export function GET(request: NextRequest) {
-  try {
-    const user = getRequestUser(request);
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "Not authenticated." },
-        { status: 401 },
-      );
-    }
-
-    return NextResponse.json({ success: true, user });
-  } catch (error) {
-    console.error("Session lookup failed:", error);
-    return NextResponse.json(
-      { success: false, message: "Unable to verify the session." },
-      { status: 500 },
-    );
-  }
+export async function GET(request: NextRequest) {
+  const auth = await requireAuthenticatedUser(request);
+  if (!auth.ok) return auth.response;
+  return NextResponse.json({ success: true, user: auth.user });
 }
