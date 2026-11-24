@@ -19,8 +19,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Book Your Health",
+  title: "Clinio | Your Personal Healthcare Center",
   description: "Doctor's Appointment platform",
+  icons: {
+    icon: [
+      {
+        media: '(prefers-color-scheme: light)',
+        url: '/clinio-logo.svg',
+        href: '/clinio-logo.svg',
+      },
+      {
+        media: '(prefers-color-scheme: dark)',
+        url: '/clinio-logo.svg',
+        href: '/clinio-logo.svg',
+      }
+    ]
+  }
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
