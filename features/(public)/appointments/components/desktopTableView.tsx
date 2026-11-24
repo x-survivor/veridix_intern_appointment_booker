@@ -23,7 +23,7 @@ import { appointment } from "@/shared/constants/types/appointmentType";
 
 const DesktopView = (
     { filter, setFilter, setDialogTrigger, filteredData, loading, error, refetch, pages, currentPage }:
-        { filter: filter, filteredData: appointment[], loading: boolean, error: {message: string}, setDialogTrigger: Dispatch<SetStateAction<boolean>>, setFilter: Dispatch<SetStateAction<filter>>, refetch: (page?: number) => Promise<void>, pages: number, currentPage: number }
+        { filter: filter, filteredData: appointment[], loading: boolean, error: { message: string }, setDialogTrigger: Dispatch<SetStateAction<boolean>>, setFilter: Dispatch<SetStateAction<filter>>, refetch: (page?: number) => Promise<void>, pages: number, currentPage: number }
 ) => {
     const visiblePages = 5;
     const startPage = Math.max(
@@ -36,7 +36,7 @@ const DesktopView = (
         (_, index) => startPage + index
     );
     return (
-        <div className="hidden lg:flex flex-col gap-2 px-4 rounded-md shadow-sm bg-sidebar">
+        <div className="hidden lg:flex flex-col gap-2 px-4 rounded-md shadow-sm bg-sidebar 2xl:mt-5">
             <table className="w-full">
                 <thead className="sticky top-0 bg-sidebar">
                     <tr>
@@ -67,7 +67,7 @@ const DesktopView = (
                     <tr className="flex gap-6 justify-evenly font-bold pb-2 bg-background">
                         <td>
                             <span
-                                className="w-4 aspect-square flex justify-center items-center rounded-full font-bold"
+                                className="w-4 2xl:w-6 aspect-square flex justify-center items-center rounded-full font-bold"
                             >
                             </span>
                         </td>
@@ -84,7 +84,7 @@ const DesktopView = (
                             Doctor Name
                         </td>
                         <td className="w-full flex justify-center items-center">
-                            Change Status
+                            Action
                         </td>
                         <td className="w-full flex justify-evenly items-center">
                             Status
@@ -92,7 +92,7 @@ const DesktopView = (
                     </tr>
                 </thead>
 
-                <tbody className="w-full h-[calc(45vh)] flex flex-col overflow-auto scrollbar-thin scrollbar-track-sidebar scrollbar-thumb-foreground">
+                <tbody className="w-full h-[40vh] 2xl:h-[50vh] flex flex-col overflow-auto scrollbar-thin scrollbar-track-sidebar scrollbar-thumb-foreground">
                     {/* Loading and Error States */}
                     {loading ? (
                         <tr className="w-full h-full flex justify-center items-center">
@@ -110,7 +110,7 @@ const DesktopView = (
                         ) :
                             (
                                 filteredData.length > 0 && filteredData?.map((data) => (
-                                    <tr key={data.id} className="border-b border-b-gray-800/20 flex">
+                                    <tr key={data.id} className="border-b border-b-foreground/10 flex">
                                         <AppointmentCard data={data} refetch={refetch} />
                                     </tr>
                                 )
@@ -118,8 +118,7 @@ const DesktopView = (
                             )
                     }
                 </tbody>
-                {
-                    pages > 1 && <tfoot>
+                <tfoot>
                     <tr>
                         <td className="w-full flex justify-center items-center gap-2 p-4 flex-wrap">
                             <Button onClick={() => refetch(currentPage - 1)} variant={'ghost'} className={"aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer"}><ChevronLeft /></Button>
@@ -176,7 +175,7 @@ const DesktopView = (
                         </td>
                     </tr>
                 </tfoot>
-                }
+
             </table>
         </div >
     )

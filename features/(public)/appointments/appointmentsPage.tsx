@@ -23,6 +23,7 @@ const AppointmentPage = () => {
             <Toaster />
             <div className="flex flex-col lg:flex-row gap-2">
                 <StatisticsCard title="Total" count={statistics.total} />
+                <StatisticsCard title="Booked" count={statistics.booked} />
                 <StatisticsCard title="Cancelled" count={statistics.cancelled} />
                 <StatisticsCard title="Completed" count={statistics.completed} />
             </div>

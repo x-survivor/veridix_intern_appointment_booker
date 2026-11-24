@@ -14,7 +14,7 @@ const filterSchema = z.object({
     .min(1, "Doctor name is required")
     .max(100, "Doctor name cannot exceed 100 characters")
     .regex(
-      /^(?:Dr\.\s*)?[A-Za-z\s]+$/,
+      /^(?:Dr\. )?[A-Za-z]+(?: [A-Za-z]+)*$/,
       "Doctor name can only include alphabets, 'Dr.' and spaces",
     )
     .optional(),

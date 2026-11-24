@@ -20,7 +20,7 @@ const AppointmentCard = ({ data, refetch }: { data: appointment, refetch: () => 
                     {patient_initials}
                 </span>
             </td>
-            <td className="w-full flex justify-start items-start text-lg font-semibold">
+            <td className="w-full flex justify-start items-start text-lg">
                 {data.patient_name}
             </td>
             <td className="w-full flex flex-col justify-evenly align-text-start">

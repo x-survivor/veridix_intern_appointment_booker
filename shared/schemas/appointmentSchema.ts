@@ -29,7 +29,7 @@ export const appointmentSchema = z.object({
     .trim()
     .min(1, "Doctor name is required")
     .max(100, "Doctor name cannot exceed 100 characters")
-    .regex(/^(?:Dr\.\s*)?[A-Za-z\s]+$/, "Doctor Name can only include Alphabet, 'Dr. ', and Space"),
+    .regex(/^(?:Dr\. )?[A-Za-z]+(?: [A-Za-z]+)*$/, "Doctor Name can only include Alphabet, 'Dr. ', and Space"),
 
   date: z
   .string()
@@ -45,6 +45,7 @@ export const appointmentSchema = z.object({
   duration: z
     .number()
     .int("Duration must be an integer")
+    .max(120, "Appointment duration cannot be more than 2 hours")
     .positive("Duration must be greater than zero"),
 
   reason: z

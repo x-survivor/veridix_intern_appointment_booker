@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@utility no-scrollbar-arrows {
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -103,9 +109,9 @@
   --sidebar-accent: #eff6ff;
   --sidebar-border: #e2e8f0;
 
-  --status-booked: #1D4ED8;
-  --status-completed: #16A34A;
-  --status-cancelled: #DC2626;
+  --status-booked: #1d4ed8;
+  --status-completed: #16a34a;
+  --status-cancelled: #dc2626;
 
   --radius: 0.625rem;
 }
@@ -158,9 +164,9 @@
   --sidebar-accent: #1e293b;
   --sidebar-border: #263449;
 
-   --status-booked: #60A5FA;
-  --status-completed: #4ADE80;
-  --status-cancelled: #F87171;
+  --status-booked: #60a5fa;
+  --status-completed: #4ade80;
+  --status-cancelled: #f87171;
 
   --radius: 0.625rem;
 }
