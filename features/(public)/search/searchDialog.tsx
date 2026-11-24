@@ -23,12 +23,12 @@ const SearchDialog = ({ searchDialogTrigger, setSearchDialogTrigger }: { searchD
             <Dialog open={searchDialogTrigger} onOpenChange={() => { setSearchDialogTrigger(false) }}>
                 <DialogContent className="rounded-md h-[90vh] bg-background">
                     <DialogHeader className="w-[calc(100%-100px)] h-1/6">
-                        <div className="flex justify-between items-center lg:border border-foreground rounded-full px-2 gap-2">
+                        <DialogTitle className="flex justify-between items-center lg:border border-foreground rounded-full px-2 gap-2">
                             <Input onChange={(e) => handleSearch(e.target.value)} type="text" className="block lg:w-[90%] border-0 px-2 placeholder:text-xs placeholder:text-black/30" placeholder="Search by Patient Name or Doctor Name" />
                             <div className="flex justify-end lg:justify-center items-center w-full lg:w-[10%]">
                                 <Search />
                             </div>
-                        </div>
+                        </DialogTitle>
                     </DialogHeader>
                     <div className="flex flex-col gap-4 h-full p-2 overflow-auto scrollbar-thin scrollbar-thumb-foreground no-scrollbar-arrows">
                         {

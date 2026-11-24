@@ -40,7 +40,7 @@ export const useSearch = (value: string) => {
       refetch();
     };
     getData();
-  }, [value]);
+  }, [value, refetch]);
 
   return { loading, error, searchResult, refetch };
 };

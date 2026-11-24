@@ -121,7 +121,7 @@ const DesktopView = (
                 <tfoot>
                     <tr>
                         <td className="w-full flex justify-center items-center gap-2 p-4 flex-wrap">
-                            <Button onClick={() => refetch(currentPage - 1)} variant={'ghost'} className={"aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer"}><ChevronLeft /></Button>
+                            <Button onClick={() => refetch(currentPage - 1)} variant={'ghost'} className={"aspect-square p-1 border border-accent rounded-md hover:bg-transparent text-accent hover:text-sidebar cursor-pointer"}><ChevronLeft /></Button>
                             <div className="flex justify-center items-center gap-2">
                                 {startPage > 1 && (
                                     <>
@@ -129,9 +129,9 @@ const DesktopView = (
                                             onClick={() => refetch(1)}
                                             variant="ghost"
                                             className={cn(
-                                                "aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer",
+                                                "aspect-square p-1 border border-accent rounded-md hover:bg-accent cursor-pointer",
                                                 currentPage === 1 &&
-                                                "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                                                "bg-accent text-sidebar hover:bg-accent/90 hover:text-sidebar"
                                             )}>
                                             1
                                         </Button>
@@ -145,9 +145,9 @@ const DesktopView = (
                                         onClick={() => refetch(page)}
                                         variant="ghost"
                                         className={cn(
-                                            "aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer",
+                                            "aspect-square p-1 border border-accent rounded-md hover:bg-accent text-accent hover:text-sidebar cursor-pointer",
                                             currentPage === page &&
-                                            "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                                            "bg-accent text-sidebar hover:bg-accent/90 hover:text-sidebar transition-colors duration-500 ease-in"
                                         )}
                                     >
                                         {page}
@@ -161,9 +161,9 @@ const DesktopView = (
                                             onClick={() => refetch(pages)}
                                             variant="ghost"
                                             className={cn(
-                                                "aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer",
+                                                "aspect-square p-1 border border-accent rounded-md hover:bg-accent text-accent hover:text-sidebar cursor-pointer",
                                                 currentPage === pages &&
-                                                "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                                                "bg-accent text-sidebar hover:bg-foreground/90 hover:text-sidebar"
                                             )}
                                         >
                                             {pages}
@@ -171,7 +171,7 @@ const DesktopView = (
                                     </>
                                 )}
                             </div>
-                            <Button onClick={() => refetch(currentPage + 1)} variant={'ghost'} className={"aspect-square p-1 border border-foreground rounded-md hover:bg-background cursor-pointer"}><ChevronRight /></Button>
+                            <Button onClick={() => refetch(currentPage + 1)} variant={'ghost'} className={"aspect-square p-1 border border-accent rounded-md hover:bg-transparent text-accent hover:text-sidebar cursor-pointer"}><ChevronRight /></Button>
                         </td>
                     </tr>
                 </tfoot>
